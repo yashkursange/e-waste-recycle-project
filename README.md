@@ -67,6 +67,11 @@ npm run preview
 
 ```
 cep/
+├── backend/
+│ ├── db.js
+│ ├── server.js
+│ └── routes/auth.js
+├── node_modules/
 ├── src/
 │   ├── pages/
 │   │   └── Home.jsx          # Main home page component
@@ -160,5 +165,85 @@ This is a project template. Feel free to customize and extend based on your requ
 MIT License - feel free to use this project for learning or commercial purposes.
 
 ---
+## 🧩 NEW – Backend Integration (Added)
 
+- This project now includes a Node.js + Express backend and MySQL database for real authentication.
+
+## 🗄 Backend Tech Stack
+
+- Node.js
+- Express
+- MySQL
+- bcrypt
+- JWT
+- CORS
+
+### Backend Folder Structure
+```
+ backend/
+ ├── db.js
+ ├── server.js
+ └── routes/
+ └── auth.js
+```
+
+## 🔐 Authentication Routes
+- POST /auth/register – create user
+- POST /auth/login – login and receive JWT
+
+### Example Request – Register
+```
+POST http://localhost:5000/auth/register
+
+{
+"email": "test@example.com
+",
+"password": "mypassword"
+}
+```
+
+### Example Request – Login
+```
+POST http://localhost:5000/auth/login
+
+{
+"email": "test@example.com
+",
+"password": "mypassword"
+}
+```
+## 💻 Running Backend Locally
+```
+cd backend
+npm install
+node server.js
+```
+
+- Backend runs on:
+```
+http://localhost:5000
+```
+## 🧠 Environment Notes
+
+- Ensure MySQL server is running
+
+- Update db.js credentials
+```
+(user: "root", password: "YOUR_PASSWORD", database: "e_waste")
+```
+
+- Token is stored in browser -> localStorage
+
+## 🧭 Full App Run Guide
+### Open two terminals:
+
+- Terminal #1 – Backend:
+```
+cd backend
+node server.js
+```
+- Terminal #2 – Frontend:
+```
+npm run dev
+```
 Built with ♻️ by EcoRecycle Team
