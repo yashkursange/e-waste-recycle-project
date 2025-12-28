@@ -19,17 +19,34 @@ const Login = () => {
     return !next.email && !next.password;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
     setLoading(true);
-    
-    setTimeout(() => {
+
+    try {
+      const res = await fetch("http://localhost:5000/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
       setLoading(false);
-      console.log("Login submitted", { email });
-      navigate("/");
-    }, 800);
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        navigate("/");  // redirect to homepage/dashboard
+      } else {
+        alert(data.error || "Login failed");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Server not reachable");
+      setLoading(false);
+    }
   };
+
 
   const handleGoogle = () => {
     console.log("Google login (placeholder)");
@@ -67,17 +84,16 @@ const Login = () => {
                   aria-invalid={!!errors.email}
                   aria-describedby={errors.email ? "email-error" : undefined}
                   aria-required="true"
-                  className={`w-full px-4 py-3 rounded-lg border-2 ${
-                    errors.email 
-                      ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100" 
+                  className={`w-full px-4 py-3 rounded-lg border-2 ${errors.email
+                      ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
                       : "border-gray-200 focus:border-eco-green-500 focus:ring-4 focus:ring-eco-green-100"
-                  } focus:outline-none bg-white text-gray-900 transition-all duration-200 placeholder:text-gray-400`}
+                    } focus:outline-none bg-white text-gray-900 transition-all duration-200 placeholder:text-gray-400`}
                   placeholder="you@example.com"
                 />
                 {errors.email && (
                   <p id="email-error" role="alert" className="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                     </svg>
                     {errors.email}
                   </p>
@@ -100,11 +116,10 @@ const Login = () => {
                     aria-invalid={!!errors.password}
                     aria-describedby={errors.password ? "password-error" : undefined}
                     aria-required="true"
-                    className={`w-full px-4 py-3 rounded-lg border-2 ${
-                      errors.password 
-                        ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100" 
+                    className={`w-full px-4 py-3 rounded-lg border-2 ${errors.password
+                        ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
                         : "border-gray-200 focus:border-eco-green-500 focus:ring-4 focus:ring-eco-green-100"
-                    } focus:outline-none bg-white text-gray-900 transition-all duration-200 pr-12 placeholder:text-gray-400`}
+                      } focus:outline-none bg-white text-gray-900 transition-all duration-200 pr-12 placeholder:text-gray-400`}
                     placeholder="Enter your password"
                   />
                   <button
@@ -116,12 +131,12 @@ const Login = () => {
                   >
                     {showPassword ? (
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
                       </svg>
                     ) : (
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                       </svg>
                     )}
                   </button>
@@ -129,7 +144,7 @@ const Login = () => {
                 {errors.password && (
                   <p id="password-error" role="alert" className="mt-2 text-sm text-red-600 font-medium flex items-center gap-1">
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd"/>
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                     </svg>
                     {errors.password}
                   </p>
@@ -138,8 +153,8 @@ const Login = () => {
 
               <div className="flex items-center justify-between mb-6">
                 <div />
-                <a 
-                  href="#forgot" 
+                <a
+                  href="#forgot"
                   className="text-sm text-eco-green-600 hover:text-eco-green-700 font-medium transition-colors duration-200 hover:underline focus:outline-none focus:ring-2 focus:ring-eco-green-400 rounded px-1"
                 >
                   Forgot password?
@@ -155,8 +170,8 @@ const Login = () => {
                 {loading ? (
                   <span className="inline-flex items-center gap-2">
                     <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
                     Signing in...
                   </span>
@@ -179,10 +194,10 @@ const Login = () => {
                   className="w-full inline-flex items-center justify-center gap-3 border-2 border-gray-200 bg-white text-gray-700 py-3 rounded-lg hover:shadow-md hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-200 transition-all duration-200 transform hover:scale-[1.01] active:scale-[0.99] font-medium"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M23.99 12.23c0-.78-.07-1.53-.21-2.26H12v4.28h6.62c-.29 1.5-1.17 2.77-2.5 3.63v3.02h4.04c2.36-2.17 3.73-5.38 3.73-8.67z" fill="#4285F4"/>
-                    <path d="M12 24c3.24 0 5.96-1.08 7.95-2.93l-4.04-3.02c-1.13.76-2.58 1.21-3.91 1.21-3 0-5.55-2.02-6.46-4.74H1.86v2.97C3.86 21.73 7.69 24 12 24z" fill="#34A853"/>
-                    <path d="M5.54 14.52c-.26-.77-.41-1.59-.41-2.52s.15-1.75.41-2.52V6.5H1.86A11.98 11.98 0 000 12c0 1.95.45 3.8 1.26 5.5l4.28-3z" fill="#FBBC05"/>
-                    <path d="M12 4.76c1.76 0 3.35.61 4.59 1.8l3.44-3.44C17.95 1.07 15.24 0 12 0 7.69 0 3.86 2.27 1.86 5.5l4.28 3.02C6.45 6.78 9 4.76 12 4.76z" fill="#EA4335"/>
+                    <path d="M23.99 12.23c0-.78-.07-1.53-.21-2.26H12v4.28h6.62c-.29 1.5-1.17 2.77-2.5 3.63v3.02h4.04c2.36-2.17 3.73-5.38 3.73-8.67z" fill="#4285F4" />
+                    <path d="M12 24c3.24 0 5.96-1.08 7.95-2.93l-4.04-3.02c-1.13.76-2.58 1.21-3.91 1.21-3 0-5.55-2.02-6.46-4.74H1.86v2.97C3.86 21.73 7.69 24 12 24z" fill="#34A853" />
+                    <path d="M5.54 14.52c-.26-.77-.41-1.59-.41-2.52s.15-1.75.41-2.52V6.5H1.86A11.98 11.98 0 000 12c0 1.95.45 3.8 1.26 5.5l4.28-3z" fill="#FBBC05" />
+                    <path d="M12 4.76c1.76 0 3.35.61 4.59 1.8l3.44-3.44C17.95 1.07 15.24 0 12 0 7.69 0 3.86 2.27 1.86 5.5l4.28 3.02C6.45 6.78 9 4.76 12 4.76z" fill="#EA4335" />
                   </svg>
                   Continue with Google
                 </button>
@@ -191,8 +206,8 @@ const Login = () => {
 
             <p className="text-center text-sm text-gray-600 mt-6">
               Don't have an account?{" "}
-              <a 
-                href="#signup" 
+              <a
+                href="#signup"
                 className="text-eco-green-600 font-semibold hover:text-eco-green-700 transition-colors duration-200 hover:underline focus:outline-none focus:ring-2 focus:ring-eco-green-400 rounded px-1"
               >
                 Sign up
