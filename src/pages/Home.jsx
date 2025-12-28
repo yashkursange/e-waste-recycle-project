@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 /**
  * Home Component - Main landing page for E-Waste Recycling Pickup Application
@@ -16,23 +17,20 @@ const Home = () => {
       value: '45,280',
       unit: 'kg',
       icon: '♻️',
-      color: 'eco-green'
     },
     {
       id: 2,
       title: 'CO₂ Emissions Saved',
       value: '28,500',
       unit: 'kg',
-      icon: '🌱',
-      color: 'eco-blue'
+      icon: '🌱'
     },
     {
       id: 3,
       title: 'Active Members',
       value: '12,450',
       unit: '',
-      icon: '👥',
-      color: 'eco-green'
+      icon: '👥'
     }
   ];
 
@@ -43,7 +41,6 @@ const Home = () => {
       title: 'Add E-Waste Item',
       description: 'List items for pickup',
       icon: '📱',
-      color: 'eco-green',
       action: () => console.log('Add E-Waste Item')
     },
     {
@@ -51,7 +48,6 @@ const Home = () => {
       title: 'Schedule Pickup',
       description: 'Book a pickup slot',
       icon: '📅',
-      color: 'eco-blue',
       action: () => console.log('Schedule Pickup')
     },
     {
@@ -59,7 +55,6 @@ const Home = () => {
       title: 'Track Status',
       description: 'Monitor your pickup',
       icon: '📍',
-      color: 'eco-yellow',
       action: () => console.log('Track Status')
     },
     {
@@ -67,7 +62,6 @@ const Home = () => {
       title: 'View Rewards',
       description: 'Check your points',
       icon: '🎁',
-      color: 'eco-green',
       action: () => console.log('View Rewards')
     }
   ];
@@ -166,18 +160,18 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
           <div className="flex items-center space-x-4">
             {!isLoggedIn ? (
               <>
-                <button 
-                  onClick={() => setIsLoggedIn(true)}
+                <Link 
+                  to="/login"
                   className="text-eco-green-600 hover:text-eco-green-700 font-medium transition"
                 >
                   Login
-                </button>
-                <button 
-                  onClick={() => setIsLoggedIn(true)}
+                </Link>
+                <Link 
+                  to="/login"
                   className="bg-eco-green-600 text-white px-6 py-2 rounded-full hover:bg-eco-green-700 transition shadow-md"
                 >
                   Sign Up
-                </button>
+                </Link>
               </>
             ) : (
               <button 
