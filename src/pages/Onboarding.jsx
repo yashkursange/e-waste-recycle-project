@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Recycle, Truck, Gift, Globe } from "lucide-react";
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ const Onboarding = () => {
   const onboardingSteps = [
     {
       id: 0,
-      icon: "♻️",
+      icon: "Recycle",
       title: "Welcome to EcoRecycle",
       subtitle: "Recycle e-waste responsibly and protect the planet",
       description: "Join thousands of eco-conscious individuals making a real difference in reducing electronic waste and building a sustainable future.",
@@ -17,7 +18,7 @@ const Onboarding = () => {
     },
     {
       id: 1,
-      icon: "🚚",
+      icon: "Truck",
       title: "Free Doorstep Pickup",
       subtitle: "Convenient and hassle-free",
       description: "Schedule a pickup at your convenience. Our trained professionals will collect your e-waste right from your doorstep—completely free of charge.",
@@ -25,7 +26,7 @@ const Onboarding = () => {
     },
     {
       id: 2,
-      icon: "🎁",
+      icon: "Gift",
       title: "Earn Rewards for Recycling",
       subtitle: "Get rewarded for doing good",
       description: "Earn points for every item you recycle. Redeem your points for exciting rewards, discounts, and eco-friendly products.",
@@ -33,13 +34,24 @@ const Onboarding = () => {
     },
     {
       id: 3,
-      icon: "🌍",
+      icon: "Globe",
       title: "Track Your Environmental Impact",
       subtitle: "See the difference you're making",
       description: "Monitor your contribution to the planet. Track the amount of e-waste recycled, CO₂ emissions saved, and resources conserved.",
       buttonText: "Start Recycling"
     }
   ];
+
+  // Helper function to render icon components
+  const renderIcon = (iconName, className) => {
+    const icons = {
+      Recycle: <Recycle className={className} />,
+      Truck: <Truck className={className} />,
+      Gift: <Gift className={className} />,
+      Globe: <Globe className={className} />
+    };
+    return icons[iconName] || null;
+  };
 
   const handleNext = () => {
     if (currentStep < onboardingSteps.length - 1) {
@@ -76,7 +88,7 @@ const Onboarding = () => {
               aria-label="Skip onboarding"
               className="text-sm text-gray-500 hover:text-gray-700 font-medium transition-all duration-200 px-5 py-2 rounded-lg hover:bg-white hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-300 focus:bg-white"
             >
-              Skip →
+              Skip onboarding →
             </button>
           </div>
         )}
@@ -85,11 +97,11 @@ const Onboarding = () => {
           <div className="text-center mb-8">
             <div
               key={`icon-${currentStep}`}
-              className={`inline-block text-8xl md:text-9xl mb-6 transition-all duration-700 ${
+              className={`inline-block mb-6 transition-all duration-700 ${
                 direction === "forward" ? "animate-slideInRight" : "animate-slideInLeft"
               }`}
             >
-              {currentData.icon}
+              {renderIcon(currentData.icon, 'w-24 h-24 text-eco-green-600')}
             </div>
           </div>
 
@@ -101,7 +113,7 @@ const Onboarding = () => {
           >
             {currentStep === 0 && (
               <div className="flex items-center justify-center gap-3 mb-6 animate-fadeIn">
-                <span className="text-4xl" role="img" aria-label="Recycle icon">♻️</span>
+                <Recycle className="w-10 h-10 text-eco-green-600" role="img" aria-label="Recycle icon" />
                 <h1 className="text-3xl font-extrabold text-gray-900">EcoRecycle</h1>
               </div>
             )}

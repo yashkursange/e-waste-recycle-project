@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import { Recycle, Globe, Leaf } from "lucide-react";
 
 const AuthSwitcher = () => {
   const [isLoginActive, setIsLoginActive] = useState(true);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-eco-green-50 via-white to-white flex items-center justify-center p-6">
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-gradient-to-b from-eco-green-50 via-white to-white flex items-center justify-center p-6">
       <div className="w-full max-w-4xl">
         {isLoginActive ? (
           <LoginForm onSwitchToSignup={() => setIsLoginActive(false)} />
@@ -14,6 +18,7 @@ const AuthSwitcher = () => {
         )}
       </div>
     </main>
+    </>
   );
 };
 
@@ -57,7 +62,7 @@ const LoginForm = ({ onSwitchToSignup }) => {
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
       <div className="w-full md:w-1/2 p-8 md:p-12">
         <div className="flex items-center gap-3 mb-6">
-          <div className="text-3xl">♻️</div>
+          <Recycle className="w-8 h-8 text-eco-green-600" />
           <div>
             <h1 className="text-2xl font-extrabold text-gray-900">EcoRecycle</h1>
             <p className="text-sm text-gray-500 -mt-0.5">Recycle your e-waste responsibly</p>
@@ -182,7 +187,7 @@ const LoginForm = ({ onSwitchToSignup }) => {
 
       <aside className="hidden md:flex w-1/2 bg-gradient-to-br from-eco-green-50 to-eco-blue-50 items-center justify-center p-8">
         <div className="max-w-xs text-center">
-          <div className="text-7xl mb-6">🌍</div>
+          <Globe className="w-20 h-20 mx-auto mb-6 text-eco-green-600" />
           <h3 className="text-2xl font-bold text-gray-900 mb-3">Welcome back</h3>
           <p className="text-gray-700 leading-relaxed">
             Continue your journey towards a greener planet.
@@ -252,7 +257,7 @@ const SignupForm = ({ onSwitchToLogin }) => {
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
       <div className="w-full md:w-1/2 p-8 md:p-12">
         <div className="flex items-center gap-3 mb-6">
-          <div className="text-3xl">♻️</div>
+          <Recycle className="w-8 h-8 text-eco-green-600" />
           <div>
             <h1 className="text-2xl font-extrabold text-gray-900">EcoRecycle</h1>
             <p className="text-sm text-gray-500 -mt-0.5">Recycle your e-waste responsibly</p>
@@ -450,7 +455,7 @@ const SignupForm = ({ onSwitchToLogin }) => {
 
       <aside className="hidden md:flex w-1/2 bg-gradient-to-br from-eco-green-50 to-eco-blue-50 items-center justify-center p-8">
         <div className="max-w-xs text-center">
-          <div className="text-7xl mb-6">🌱</div>
+          <Leaf className="w-20 h-20 mx-auto mb-6 text-eco-green-600" />
           <h3 className="text-2xl font-bold text-gray-900 mb-3">Start your eco journey</h3>
           <p className="text-gray-700 leading-relaxed">
             Join our community and make a positive impact on the environment.

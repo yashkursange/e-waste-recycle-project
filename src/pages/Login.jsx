@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import { Recycle, Globe } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -53,12 +55,14 @@ const Login = () => {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-eco-green-50 via-white to-white flex items-center justify-center p-6">
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-gradient-to-b from-eco-green-50 via-white to-white flex items-center justify-center p-6">
       <div className="w-full max-w-4xl">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
           <div className="w-full md:w-1/2 p-8 md:p-12">
             <div className="flex items-center gap-3 mb-6">
-              <div className="text-3xl" role="img" aria-label="Recycle icon">♻️</div>
+              <Recycle className="w-8 h-8 text-eco-green-600" role="img" aria-label="Recycle icon" />
               <div>
                 <h1 className="text-2xl font-extrabold text-gray-900">EcoRecycle</h1>
                 <p className="text-sm text-gray-500 -mt-0.5">Recycle your e-waste responsibly</p>
@@ -217,7 +221,7 @@ const Login = () => {
 
           <aside className="hidden md:flex w-1/2 bg-gradient-to-br from-eco-green-50 to-eco-blue-50 items-center justify-center p-8" aria-label="Benefits of EcoRecycle">
             <div className="max-w-xs text-center">
-              <div className="text-7xl mb-6 animate-bounce" role="img" aria-label="Earth icon">🌍</div>
+              <Globe className="w-20 h-20 mx-auto mb-6 text-eco-green-600 animate-bounce" role="img" aria-label="Earth icon" />
               <h3 className="text-2xl font-bold text-gray-900 mb-3">Keep electronics in use</h3>
               <p className="text-gray-700 mb-6 leading-relaxed">
                 Schedule pickups, earn rewards, and help prevent toxic waste from entering our environment.
@@ -247,6 +251,7 @@ const Login = () => {
         </div>
       </div>
     </main>
+    </>
   );
 };
 

@@ -1,5 +1,30 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Recycle, Leaf, Users, Smartphone, Calendar, MapPin, Gift, Monitor, Globe, Facebook, Twitter, Instagram, Linkedin, Package, Star } from 'lucide-react';
+
+/**
+ * Helper function to render icon components
+ */
+const renderIcon = (iconName, className) => {
+  const icons = {
+    Recycle: <Recycle className={className} />,
+    Leaf: <Leaf className={className} />,
+    Users: <Users className={className} />,
+    Smartphone: <Smartphone className={className} />,
+    Calendar: <Calendar className={className} />,
+    MapPin: <MapPin className={className} />,
+    Gift: <Gift className={className} />,
+    Monitor: <Monitor className={className} />,
+    Globe: <Globe className={className} />,
+    Facebook: <Facebook className={className} />,
+    Twitter: <Twitter className={className} />,
+    Instagram: <Instagram className={className} />,
+    Linkedin: <Linkedin className={className} />,
+    Package: <Package className={className} />,
+    Star: <Star className={className} />
+  };
+  return icons[iconName] || null;
+};
 
 /**
  * Home Component - Main landing page for E-Waste Recycling Pickup Application
@@ -16,21 +41,21 @@ const Home = () => {
       title: 'E-Waste Recycled',
       value: '45,280',
       unit: 'kg',
-      icon: '♻️',
+      icon: 'Recycle',
     },
     {
       id: 2,
       title: 'CO₂ Emissions Saved',
       value: '28,500',
       unit: 'kg',
-      icon: '🌱'
+      icon: 'Leaf'
     },
     {
       id: 3,
       title: 'Active Members',
       value: '12,450',
       unit: '',
-      icon: '👥'
+      icon: 'Users'
     }
   ];
 
@@ -40,28 +65,28 @@ const Home = () => {
       id: 1,
       title: 'Add E-Waste Item',
       description: 'List items for pickup',
-      icon: '📱',
+      icon: 'Smartphone',
       action: () => console.log('Add E-Waste Item')
     },
     {
       id: 2,
       title: 'Schedule Pickup',
       description: 'Book a pickup slot',
-      icon: '📅',
+      icon: 'Calendar',
       action: () => console.log('Schedule Pickup')
     },
     {
       id: 3,
       title: 'Track Status',
       description: 'Monitor your pickup',
-      icon: '📍',
+      icon: 'MapPin',
       action: () => console.log('Track Status')
     },
     {
       id: 4,
       title: 'View Rewards',
       description: 'Check your points',
-      icon: '🎁',
+      icon: 'Gift',
       action: () => console.log('View Rewards')
     }
   ];
@@ -81,19 +106,19 @@ const Home = () => {
       id: 1,
       title: 'What is E-Waste?',
       description: 'Electronic waste includes discarded electrical or electronic devices. Computers, phones, TVs, and appliances all become e-waste when disposed of.',
-      icon: '🖥️'
+      icon: 'Monitor'
     },
     {
       id: 2,
       title: 'Why Recycle Electronics?',
       description: 'E-waste contains toxic materials that harm the environment. Recycling recovers valuable materials and prevents pollution.',
-      icon: '♻️'
+      icon: 'Recycle'
     },
     {
       id: 3,
       title: 'Environmental Impact',
       description: 'Proper e-waste recycling reduces landfill waste, conserves natural resources, and prevents harmful chemicals from contaminating soil and water.',
-      icon: '🌍'
+      icon: 'Globe'
     }
   ];
 
@@ -133,7 +158,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <span className="text-3xl">♻️</span>
+            <Recycle className="w-8 h-8 text-eco-green-600" />
             <h1 className="text-2xl font-bold text-eco-green-600">EcoRecycle</h1>
           </div>
 
@@ -211,22 +236,24 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-20">
-            <button className="w-full sm:w-auto bg-eco-green-600 text-white px-10 py-5 rounded-full font-bold text-lg hover:bg-eco-green-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 hover:scale-105">
-              📅 Schedule a Pickup
+            <button className="w-full sm:w-auto bg-eco-green-600 text-white px-10 py-5 rounded-full font-bold text-lg hover:bg-eco-green-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 hover:scale-105 flex items-center gap-3">
+              <Calendar className="w-5 h-5" />
+              Schedule a Pickup
             </button>
-            <button className="w-full sm:w-auto bg-white text-eco-green-700 border-2 border-eco-green-600 px-10 py-5 rounded-full font-bold text-lg hover:bg-eco-green-50 hover:border-eco-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-              📚 Learn More
+            <button className="w-full sm:w-auto bg-white text-eco-green-700 border-2 border-eco-green-600 px-10 py-5 rounded-full font-bold text-lg hover:bg-eco-green-50 hover:border-eco-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center gap-3">
+              <Monitor className="w-5 h-5" />
+              Learn More
             </button>
           </div>
 
           {/* Hero Visual */}
           <div className="bg-gradient-to-r from-eco-green-100 via-eco-blue-100 to-eco-green-100 rounded-3xl p-16 shadow-2xl">
             <div className="flex items-center justify-center flex-wrap gap-6 text-7xl md:text-8xl">
-              <span className="transform hover:scale-110 transition-transform duration-300">♻️</span>
-              <span className="transform hover:scale-110 transition-transform duration-300">🌍</span>
-              <span className="transform hover:scale-110 transition-transform duration-300">📱</span>
-              <span className="transform hover:scale-110 transition-transform duration-300">💻</span>
-              <span className="transform hover:scale-110 transition-transform duration-300">🌱</span>
+              <Recycle className="w-20 h-20 text-eco-green-600 transform hover:scale-110 transition-transform duration-300" />
+              <Globe className="w-20 h-20 text-blue-600 transform hover:scale-110 transition-transform duration-300" />
+              <Smartphone className="w-20 h-20 text-violet-600 transform hover:scale-110 transition-transform duration-300" />
+              <Monitor className="w-20 h-20 text-slate-600 transform hover:scale-110 transition-transform duration-300" />
+              <Leaf className="w-20 h-20 text-green-600 transform hover:scale-110 transition-transform duration-300" />
             </div>
             <p className="mt-8 text-gray-800 font-semibold text-xl">
               Making E-Waste Recycling Simple, Free, and Rewarding
@@ -258,7 +285,7 @@ const ImpactSummary = ({ stats }) => {
               key={stat.id}
               className="bg-gradient-to-br from-eco-green-50 via-white to-eco-blue-50 rounded-3xl p-10 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border border-eco-green-200"
             >
-              <div className="text-6xl mb-6 text-center">{stat.icon}</div>
+              <div className="text-6xl mb-6 text-center flex justify-center">{renderIcon(stat.icon, 'w-16 h-16 text-eco-green-600')}</div>
               <div className="text-center">
                 <p className="text-5xl font-extrabold text-eco-green-600 mb-3">
                   {stat.value}
@@ -292,8 +319,8 @@ const QuickActions = ({ actions }) => {
               onClick={action.action}
               className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border-2 border-transparent hover:border-eco-green-500 cursor-pointer"
             >
-              <div className="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                {action.icon}
+              <div className="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300 flex justify-center">
+                {renderIcon(action.icon, 'w-14 h-14 text-eco-green-600')}
               </div>
               <h4 className="text-xl font-bold text-gray-900 mb-3">{action.title}</h4>
               <p className="text-gray-600 text-base">{action.description}</p>
@@ -373,7 +400,7 @@ const PickupStatusCard = ({ statuses }) => {
           {/* Additional Info */}
           <div className="bg-eco-green-50 rounded-2xl p-8 border border-eco-green-200">
             <div className="flex items-start space-x-4">
-              <span className="text-3xl">📦</span>
+              <Package className="w-8 h-8 text-eco-green-600" />
               <div>
                 <h5 className="font-bold text-gray-900 mb-3 text-lg">Pickup Details</h5>
                 <p className="text-base text-gray-700 mb-2">
@@ -382,8 +409,8 @@ const PickupStatusCard = ({ statuses }) => {
                 <p className="text-base text-gray-700 mb-2">
                   <strong>Scheduled:</strong> Dec 28, 2025 • 2:00 PM - 4:00 PM
                 </p>
-                <p className="text-base text-gray-700">
-                  <strong>Agent:</strong> John Doe • ⭐ 4.8 Rating
+                <p className="text-base text-gray-700 flex items-center gap-1">
+                  <strong>Agent:</strong> John Doe • <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" /> 4.8 Rating
                 </p>
               </div>
             </div>
@@ -416,7 +443,7 @@ const EducationSection = ({ cards }) => {
               key={card.id}
               className="bg-white rounded-3xl p-10 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border border-gray-100"
             >
-              <div className="text-6xl mb-6">{card.icon}</div>
+              <div className="text-6xl mb-6 flex justify-center">{renderIcon(card.icon, 'w-14 h-14 text-eco-green-600')}</div>
               <h4 className="text-2xl font-bold text-gray-900 mb-5">{card.title}</h4>
               <p className="text-gray-700 leading-relaxed text-base">{card.description}</p>
             </div>
@@ -445,7 +472,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-3 mb-6">
-              <span className="text-4xl">♻️</span>
+              <Recycle className="w-10 h-10 text-eco-green-400" />
               <h2 className="text-3xl font-bold text-eco-green-400">EcoRecycle</h2>
             </div>
             <p className="text-gray-300 leading-relaxed text-lg mb-6">
@@ -509,17 +536,17 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             {/* Social Media Icons */}
             <div className="flex items-center space-x-8">
-              <a href="#facebook" className="text-gray-300 hover:text-eco-green-400 transition-all duration-200 text-3xl transform hover:scale-110">
-                📘
+              <a href="#facebook" className="text-gray-300 hover:text-eco-green-400 transition-all duration-200 transform hover:scale-110">
+                <Facebook className="w-7 h-7" />
               </a>
-              <a href="#twitter" className="text-gray-300 hover:text-eco-green-400 transition-all duration-200 text-3xl transform hover:scale-110">
-                🐦
+              <a href="#twitter" className="text-gray-300 hover:text-eco-green-400 transition-all duration-200 transform hover:scale-110">
+                <Twitter className="w-7 h-7" />
               </a>
-              <a href="#instagram" className="text-gray-300 hover:text-eco-green-400 transition-all duration-200 text-3xl transform hover:scale-110">
-                📷
+              <a href="#instagram" className="text-gray-300 hover:text-eco-green-400 transition-all duration-200 transform hover:scale-110">
+                <Instagram className="w-7 h-7" />
               </a>
-              <a href="#linkedin" className="text-gray-300 hover:text-eco-green-400 transition-all duration-200 text-3xl transform hover:scale-110">
-                💼
+              <a href="#linkedin" className="text-gray-300 hover:text-eco-green-400 transition-all duration-200 transform hover:scale-110">
+                <Linkedin className="w-7 h-7" />
               </a>
             </div>
 
