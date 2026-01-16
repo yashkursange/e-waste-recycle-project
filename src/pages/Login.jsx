@@ -34,6 +34,8 @@ const Login = () => {
       });
 
       const data = await res.json();
+      console.log("LOGIN RESPONSE:", data);
+
       setLoading(false);
 
       if (data.token) {
@@ -211,7 +213,7 @@ const Login = () => {
             <p className="text-center text-sm text-gray-600 mt-6">
               Don't have an account?{" "}
               <a
-                href="#signup"
+                href="/signup"
                 className="text-eco-green-600 font-semibold hover:text-eco-green-700 transition-colors duration-200 hover:underline focus:outline-none focus:ring-2 focus:ring-eco-green-400 rounded px-1"
               >
                 Sign up

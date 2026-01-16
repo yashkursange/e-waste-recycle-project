@@ -164,20 +164,17 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
 
           {/* Navigation Links - Desktop */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#home" className="text-gray-700 hover:text-eco-green-600 font-medium transition">
+            <Link to="/" className="text-gray-700 hover:text-eco-green-600 font-medium transition">
               Home
-            </a>
-            <a href="#schedule" className="text-gray-700 hover:text-eco-green-600 font-medium transition">
+            </Link>
+            <Link to="/schedule-pickup" className="text-gray-700 hover:text-eco-green-600 font-medium transition">
               Schedule Pickup
-            </a>
-            <a href="#rewards" className="text-gray-700 hover:text-eco-green-600 font-medium transition">
+            </Link>
+            <Link to="/rewards" className="text-gray-700 hover:text-eco-green-600 font-medium transition">
               Rewards
-            </a>
+            </Link>
             <a href="#learn" className="text-gray-700 hover:text-eco-green-600 font-medium transition">
               Learn
-            </a>
-            <a href="#profile" className="text-gray-700 hover:text-eco-green-600 font-medium transition">
-              Profile
             </a>
           </div>
 
@@ -192,7 +189,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
                   Login
                 </Link>
                 <Link 
-                  to="/login"
+                  to="/signup"
                   className="bg-eco-green-600 text-white px-6 py-2 rounded-full hover:bg-eco-green-700 transition shadow-md"
                 >
                   Sign Up
@@ -236,14 +233,14 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-20">
-            <button className="w-full sm:w-auto bg-eco-green-600 text-white px-10 py-5 rounded-full font-bold text-lg hover:bg-eco-green-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 hover:scale-105 flex items-center gap-3">
+            <Link to="/schedule-pickup" className="w-full sm:w-auto bg-eco-green-600 text-white px-10 py-5 rounded-full font-bold text-lg hover:bg-eco-green-700 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 hover:scale-105 flex items-center gap-3">
               <Calendar className="w-5 h-5" />
               Schedule a Pickup
-            </button>
-            <button className="w-full sm:w-auto bg-white text-eco-green-700 border-2 border-eco-green-600 px-10 py-5 rounded-full font-bold text-lg hover:bg-eco-green-50 hover:border-eco-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center gap-3">
+            </Link>
+            <a href="#learn" className="w-full sm:w-auto bg-white text-eco-green-700 border-2 border-eco-green-600 px-10 py-5 rounded-full font-bold text-lg hover:bg-eco-green-50 hover:border-eco-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center gap-3">
               <Monitor className="w-5 h-5" />
               Learn More
-            </button>
+            </a>
           </div>
 
           {/* Hero Visual */}
@@ -426,7 +423,7 @@ const PickupStatusCard = ({ statuses }) => {
  */
 const EducationSection = ({ cards }) => {
   return (
-    <section className="bg-gradient-to-b from-eco-blue-50 via-eco-green-50 to-white py-20">
+    <section id="learn" className="bg-gradient-to-b from-eco-blue-50 via-eco-green-50 to-white py-20">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">

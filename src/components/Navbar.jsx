@@ -24,9 +24,9 @@ const Navbar = () => {
             <Link to="/rewards" className="text-slate-600 hover:text-emerald-700 font-medium transition">
               Rewards
             </Link>
-            <a href="#learn" className="text-slate-600 hover:text-emerald-700 font-medium transition">
+            <Link to="#learn" className="text-slate-600 hover:text-emerald-700 font-medium transition">
               Learn
-            </a>
+            </Link>
           </div>
 
           <div className="flex items-center space-x-4">
