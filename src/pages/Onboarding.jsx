@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Recycle, Truck, Gift, Globe } from "lucide-react";
+import { Recycle, Truck, Trophy, Globe } from "lucide-react";
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -26,10 +26,10 @@ const Onboarding = () => {
     },
     {
       id: 2,
-      icon: "Gift",
-      title: "Earn Rewards for Recycling",
+      icon: "Trophy",
+      title: "Climb the Leaderboard",
       subtitle: "Get rewarded for doing good",
-      description: "Earn points for every item you recycle. Redeem your points for exciting rewards, discounts, and eco-friendly products.",
+      description: "Earn points for every item you recycle. Compete with others on the leaderboard and become a top eco-warrior in your community.",
       buttonText: "Next"
     },
     {
@@ -47,7 +47,7 @@ const Onboarding = () => {
     const icons = {
       Recycle: <Recycle className={className} />,
       Truck: <Truck className={className} />,
-      Gift: <Gift className={className} />,
+      Trophy: <Trophy className={className} />,
       Globe: <Globe className={className} />
     };
     return icons[iconName] || null;
@@ -97,9 +97,8 @@ const Onboarding = () => {
           <div className="text-center mb-8">
             <div
               key={`icon-${currentStep}`}
-              className={`inline-block mb-6 transition-all duration-700 ${
-                direction === "forward" ? "animate-slideInRight" : "animate-slideInLeft"
-              }`}
+              className={`inline-block mb-6 transition-all duration-700 ${direction === "forward" ? "animate-slideInRight" : "animate-slideInLeft"
+                }`}
             >
               {renderIcon(currentData.icon, 'w-24 h-24 text-eco-green-600')}
             </div>
@@ -107,9 +106,8 @@ const Onboarding = () => {
 
           <div
             key={`content-${currentStep}`}
-            className={`text-center mb-10 transition-all duration-500 ${
-              direction === "forward" ? "animate-fadeSlideUp" : "animate-fadeSlideDown"
-            }`}
+            className={`text-center mb-10 transition-all duration-500 ${direction === "forward" ? "animate-fadeSlideUp" : "animate-fadeSlideDown"
+              }`}
           >
             {currentStep === 0 && (
               <div className="flex items-center justify-center gap-3 mb-6 animate-fadeIn">
@@ -136,13 +134,12 @@ const Onboarding = () => {
                 onClick={() => handleDotClick(index)}
                 aria-label={`Go to step ${index + 1}`}
                 aria-current={index === currentStep ? "step" : undefined}
-                className={`transition-all duration-500 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-eco-green-500 ${
-                  index === currentStep
+                className={`transition-all duration-500 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-eco-green-500 ${index === currentStep
                     ? "w-12 h-3 bg-eco-green-600 shadow-lg scale-110"
                     : index < currentStep
-                    ? "w-3 h-3 bg-eco-green-500 hover:bg-eco-green-600 hover:scale-125 shadow-md"
-                    : "w-3 h-3 bg-gray-300 hover:bg-gray-400 hover:scale-110"
-                }`}
+                      ? "w-3 h-3 bg-eco-green-500 hover:bg-eco-green-600 hover:scale-125 shadow-md"
+                      : "w-3 h-3 bg-gray-300 hover:bg-gray-400 hover:scale-110"
+                  }`}
               />
             ))}
           </div>

@@ -114,8 +114,8 @@ const Signup = () => {
                     aria-describedby={errors.name ? "name-error" : undefined}
                     aria-required="true"
                     className={`w-full px-4 py-3 rounded-lg border-2 ${errors.name
-                        ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
-                        : "border-gray-200 focus:border-eco-green-500 focus:ring-4 focus:ring-eco-green-100"
+                      ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                      : "border-gray-200 focus:border-eco-green-500 focus:ring-4 focus:ring-eco-green-100"
                       } focus:outline-none bg-white text-gray-900 transition-all duration-200 placeholder:text-gray-400`}
                     placeholder="John Doe"
                   />
@@ -145,8 +145,8 @@ const Signup = () => {
                     aria-describedby={errors.email ? "email-error" : undefined}
                     aria-required="true"
                     className={`w-full px-4 py-3 rounded-lg border-2 ${errors.email
-                        ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
-                        : "border-gray-200 focus:border-eco-green-500 focus:ring-4 focus:ring-eco-green-100"
+                      ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                      : "border-gray-200 focus:border-eco-green-500 focus:ring-4 focus:ring-eco-green-100"
                       } focus:outline-none bg-white text-gray-900 transition-all duration-200 placeholder:text-gray-400`}
                     placeholder="you@example.com"
                   />
@@ -177,8 +177,8 @@ const Signup = () => {
                       aria-describedby={errors.password ? "password-error" : undefined}
                       aria-required="true"
                       className={`w-full px-4 py-3 rounded-lg border-2 ${errors.password
-                          ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
-                          : "border-gray-200 focus:border-eco-green-500 focus:ring-4 focus:ring-eco-green-100"
+                        ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                        : "border-gray-200 focus:border-eco-green-500 focus:ring-4 focus:ring-eco-green-100"
                         } focus:outline-none bg-white text-gray-900 transition-all duration-200 pr-12 placeholder:text-gray-400`}
                       placeholder="At least 6 characters"
                     />
@@ -228,8 +228,8 @@ const Signup = () => {
                       aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
                       aria-required="true"
                       className={`w-full px-4 py-3 rounded-lg border-2 ${errors.confirmPassword
-                          ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
-                          : "border-gray-200 focus:border-eco-green-500 focus:ring-4 focus:ring-eco-green-100"
+                        ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                        : "border-gray-200 focus:border-eco-green-500 focus:ring-4 focus:ring-eco-green-100"
                         } focus:outline-none bg-white text-gray-900 transition-all duration-200 pr-12 placeholder:text-gray-400`}
                       placeholder="Re-enter your password"
                     />
@@ -363,7 +363,7 @@ const Signup = () => {
                     </li>
                     <li className="flex items-center gap-2 transition-transform duration-200 hover:translate-x-1">
                       <span className="text-eco-green-600 font-bold" aria-hidden="true">✓</span>
-                      Earn rewards for recycling
+                      Climb the recycling leaderboard
                     </li>
                     <li className="flex items-center gap-2 transition-transform duration-200 hover:translate-x-1">
                       <span className="text-eco-green-600 font-bold" aria-hidden="true">✓</span>

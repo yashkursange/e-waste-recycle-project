@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Recycle, Leaf, Users, Smartphone, Calendar, MapPin, Gift, Monitor, Globe, Facebook, Twitter, Instagram, Linkedin, Package, Star } from 'lucide-react';
+import { Recycle, Leaf, Users, Smartphone, Calendar, MapPin, Gift, Trophy, Monitor, Globe, Facebook, Twitter, Instagram, Linkedin, Package, Star } from 'lucide-react';
 
 /**
  * Helper function to render icon components
@@ -14,6 +14,7 @@ const renderIcon = (iconName, className) => {
     Calendar: <Calendar className={className} />,
     MapPin: <MapPin className={className} />,
     Gift: <Gift className={className} />,
+    Trophy: <Trophy className={className} />,
     Monitor: <Monitor className={className} />,
     Globe: <Globe className={className} />,
     Facebook: <Facebook className={className} />,
@@ -33,7 +34,7 @@ const renderIcon = (iconName, className) => {
 const Home = () => {
   // Mock user authentication state
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
+
   // Mock data for impact statistics
   const impactStats = [
     {
@@ -84,10 +85,10 @@ const Home = () => {
     },
     {
       id: 4,
-      title: 'View Rewards',
-      description: 'Check your points',
-      icon: 'Gift',
-      action: () => console.log('View Rewards')
+      title: 'Leaderboard',
+      description: 'View top recyclers',
+      icon: 'Trophy',
+      action: () => window.location.href = '/leaderboard'
     }
   ];
 
@@ -170,8 +171,8 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
             <Link to="/schedule-pickup" className="text-gray-700 hover:text-eco-green-600 font-medium transition">
               Schedule Pickup
             </Link>
-            <Link to="/rewards" className="text-gray-700 hover:text-eco-green-600 font-medium transition">
-              Rewards
+            <Link to="/leaderboard" className="text-gray-700 hover:text-eco-green-600 font-medium transition">
+              Leaderboard
             </Link>
             <a href="#learn" className="text-gray-700 hover:text-eco-green-600 font-medium transition">
               Learn
@@ -182,13 +183,13 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
           <div className="flex items-center space-x-4">
             {!isLoggedIn ? (
               <>
-                <Link 
+                <Link
                   to="/login"
                   className="text-eco-green-600 hover:text-eco-green-700 font-medium transition"
                 >
                   Login
                 </Link>
-                <Link 
+                <Link
                   to="/signup"
                   className="bg-eco-green-600 text-white px-6 py-2 rounded-full hover:bg-eco-green-700 transition shadow-md"
                 >
@@ -196,7 +197,7 @@ const Header = ({ isLoggedIn, setIsLoggedIn }) => {
                 </Link>
               </>
             ) : (
-              <button 
+              <button
                 onClick={() => setIsLoggedIn(false)}
                 className="bg-gray-600 text-white px-6 py-2 rounded-full hover:bg-gray-700 transition shadow-md"
               >
@@ -226,8 +227,8 @@ const HeroSection = () => {
 
           {/* Subtext */}
           <p className="text-xl md:text-2xl text-gray-700 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Join thousands of eco-conscious individuals in making a difference. 
-            Schedule free e-waste pickup and contribute to responsible recycling. 
+            Join thousands of eco-conscious individuals in making a difference.
+            Schedule free e-waste pickup and contribute to responsible recycling.
             Together, we can create a sustainable future.
           </p>
 
@@ -352,7 +353,7 @@ const PickupStatusCard = ({ statuses }) => {
           <div className="relative mb-10">
             {/* Timeline Line */}
             <div className="absolute left-6 top-0 bottom-0 w-1 bg-gray-200"></div>
-            <div 
+            <div
               className="absolute left-6 top-0 w-1 bg-eco-green-500 transition-all duration-500"
               style={{ height: `${(currentStatusIndex / (statuses.length - 1)) * 100}%` }}
             ></div>
@@ -363,13 +364,12 @@ const PickupStatusCard = ({ statuses }) => {
                 <div key={status.id} className="relative flex items-center">
                   {/* Status Circle */}
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center z-10 transition-all duration-300 font-bold ${
-                      status.completed
+                    className={`w-12 h-12 rounded-full flex items-center justify-center z-10 transition-all duration-300 font-bold ${status.completed
                         ? 'bg-eco-green-500 text-white shadow-lg'
                         : index === currentStatusIndex
-                        ? 'bg-eco-yellow-400 text-gray-900 ring-4 ring-eco-yellow-200 animate-pulse shadow-lg'
-                        : 'bg-gray-200 text-gray-400'
-                    }`}
+                          ? 'bg-eco-yellow-400 text-gray-900 ring-4 ring-eco-yellow-200 animate-pulse shadow-lg'
+                          : 'bg-gray-200 text-gray-400'
+                      }`}
                   >
                     {status.completed ? '✓' : index + 1}
                   </div>
@@ -377,11 +377,10 @@ const PickupStatusCard = ({ statuses }) => {
                   {/* Status Label */}
                   <div className="ml-8">
                     <h4
-                      className={`text-xl font-bold ${
-                        status.completed || index === currentStatusIndex
+                      className={`text-xl font-bold ${status.completed || index === currentStatusIndex
                           ? 'text-gray-900'
                           : 'text-gray-400'
-                      }`}
+                        }`}
                     >
                       {status.label}
                     </h4>
@@ -473,7 +472,7 @@ const Footer = () => {
               <h2 className="text-3xl font-bold text-eco-green-400">EcoRecycle</h2>
             </div>
             <p className="text-gray-300 leading-relaxed text-lg mb-6">
-              Making the world cleaner, one device at a time. Join us in our mission to 
+              Making the world cleaner, one device at a time. Join us in our mission to
               responsibly recycle e-waste and protect our planet for future generations.
             </p>
           </div>

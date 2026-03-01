@@ -6,7 +6,7 @@ import Signup from './pages/Signup'
 import Onboarding from './pages/Onboarding'
 import AuthSwitcher from './pages/AuthSwitcher'
 import SchedulePickup from './pages/SchedulePickup'
-import Rewards from './pages/Rewards'
+import Leaderboard from './pages/Leaderboard'
 import PickupConfirmation from './pages/PickupConfirmation'
 
 function App() {
@@ -20,7 +20,7 @@ function App() {
           <Route path="/auth" element={<AuthSwitcher />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/schedule-pickup" element={<SchedulePickup />} />
-          <Route path="/rewards" element={<Rewards />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/pickup-confirmation" element={<PickupConfirmation />} />
         </Routes>
       </div>
