@@ -9,6 +9,7 @@ import SchedulePickup from './pages/SchedulePickup'
 import PickupConfirmation from './pages/PickupConfirmation'
 import Dashboard from './pages/Dashboard'
 import PickupTracking from './pages/PickupTracking'
+import Leaderboard from './pages/Leaderboard'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/schedule-pickup" element={<SchedulePickup />} />
           <Route path="/pickup-tracking" element={<PickupTracking />} />
           <Route path="/pickup-confirmation" element={<PickupConfirmation />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
         </Routes>
       </div>
     </Router>
