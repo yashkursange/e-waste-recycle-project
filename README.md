@@ -190,6 +190,7 @@ MIT License - feel free to use this project for learning or commercial purposes.
 ## 🔐 Authentication Routes
 - POST /auth/register – create user
 - POST /auth/login – login and receive JWT
+- POST /auth/google – native Google OAuth login (no extra dependencies required!)
 
 ### Example Request – Register
 ```

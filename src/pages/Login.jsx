@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { Recycle, Globe } from "lucide-react";
@@ -10,6 +10,55 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const handleGoogleCredentialResponse = async (response) => {
+      setLoading(true);
+      try {
+        const res = await fetch("http://localhost:5000/auth/google", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: response.credential })
+        });
+        const data = await res.json();
+        setLoading(false);
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+          navigate("/");
+        } else {
+          alert(data.error || "Google login failed");
+        }
+      } catch (error) {
+        console.error("Google login error:", error);
+        alert("Server not reachable");
+        setLoading(false);
+      }
+    };
+
+    const initializeGoogleOptions = () => {
+      if (window.google?.accounts?.id && document.getElementById("google-login-btn")) {
+        window.google.accounts.id.initialize({
+          client_id: "658997500190-mnltu7mdr5v7t7h144jog6bjcp2vrdls.apps.googleusercontent.com",
+          callback: handleGoogleCredentialResponse
+        });
+        window.google.accounts.id.renderButton(
+          document.getElementById("google-login-btn"),
+          { theme: "outline", size: "large", type: "standard" }
+        );
+      }
+    };
+
+    if (window.google) {
+      initializeGoogleOptions();
+    } else {
+      const script = document.createElement("script");
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.defer = true;
+      script.onload = initializeGoogleOptions;
+      document.head.appendChild(script);
+    }
+  }, [navigate]);
 
   const validate = () => {
     const next = { email: "", password: "" };
@@ -51,10 +100,6 @@ const Login = () => {
     }
   };
 
-
-  const handleGoogle = () => {
-    console.log("Google login (placeholder)");
-  };
 
   return (
     <>
@@ -192,21 +237,8 @@ const Login = () => {
                   <div className="flex-grow h-px bg-gray-200" />
                 </div>
 
-                <div className="space-y-3">
-                  <button
-                    type="button"
-                    onClick={handleGoogle}
-                    aria-label="Continue with Google"
-                    className="w-full inline-flex items-center justify-center gap-3 border-2 border-gray-200 bg-white text-gray-700 py-3 rounded-lg hover:shadow-md hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-200 transition-all duration-200 transform hover:scale-[1.01] active:scale-[0.99] font-medium"
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <path d="M23.99 12.23c0-.78-.07-1.53-.21-2.26H12v4.28h6.62c-.29 1.5-1.17 2.77-2.5 3.63v3.02h4.04c2.36-2.17 3.73-5.38 3.73-8.67z" fill="#4285F4" />
-                      <path d="M12 24c3.24 0 5.96-1.08 7.95-2.93l-4.04-3.02c-1.13.76-2.58 1.21-3.91 1.21-3 0-5.55-2.02-6.46-4.74H1.86v2.97C3.86 21.73 7.69 24 12 24z" fill="#34A853" />
-                      <path d="M5.54 14.52c-.26-.77-.41-1.59-.41-2.52s.15-1.75.41-2.52V6.5H1.86A11.98 11.98 0 000 12c0 1.95.45 3.8 1.26 5.5l4.28-3z" fill="#FBBC05" />
-                      <path d="M12 4.76c1.76 0 3.35.61 4.59 1.8l3.44-3.44C17.95 1.07 15.24 0 12 0 7.69 0 3.86 2.27 1.86 5.5l4.28 3.02C6.45 6.78 9 4.76 12 4.76z" fill="#EA4335" />
-                    </svg>
-                    Continue with Google
-                  </button>
+                <div className="space-y-3 flex justify-center w-full">
+                  <div id="google-login-btn" className="w-full flex justify-center mt-2"></div>
                 </div>
               </form>
 

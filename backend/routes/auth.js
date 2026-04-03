@@ -108,4 +108,65 @@ router.post("/signup", async (req, res) => {
 });
 
 
+const https = require("https");
+
+// GOOGLE OAUTH LOGIN
+router.post("/google", (req, res) => {
+  const { token } = req.body;
+  if (!token) return res.status(400).json({ error: "Token is required" });
+
+  const url = `https://oauth2.googleapis.com/tokeninfo?id_token=${token}`;
+  
+  https.get(url, (response) => {
+    let data = '';
+    response.on('data', chunk => data += chunk);
+    response.on('end', () => {
+      try {
+        const payload = JSON.parse(data);
+        if (payload.error) return res.status(401).json({ error: "Invalid Google token" });
+        
+        const { email, name } = payload;
+        if (!email) return res.status(400).json({ error: "Email not provided by Google" });
+        
+        db.query("SELECT * FROM users WHERE email = ?", [email], async (err, result) => {
+          if (err) return res.status(500).json({ error: "Server error" });
+          
+          if (result.length > 0) {
+            const user = result[0];
+            const jwtToken = jwt.sign({ id: user.id }, "SECRET123", { expiresIn: "1d" });
+            return res.json({ message: "Google login successful", token: jwtToken });
+          } else {
+            const randomPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+            const hashedPassword = await bcrypt.hash(randomPassword, 10);
+            
+            db.query(
+              "INSERT INTO users (email, password) VALUES (?, ?)",
+              [email, hashedPassword],
+              (err2, userResult) => {
+                if (err2) return res.status(500).json({ error: "Failed to create user" });
+                const userId = userResult.insertId;
+                
+                db.query(
+                  "INSERT INTO user_profile (user_id, name) VALUES (?, ?)",
+                  [userId, name || "Google User"],
+                  (err3) => {
+                    if (err3) return res.status(500).json({ error: "Failed to save profile data" });
+                    
+                    const jwtToken = jwt.sign({ id: userId }, "SECRET123", { expiresIn: "1d" });
+                    return res.json({ message: "Google signup successful", token: jwtToken });
+                  }
+                );
+              }
+            );
+          }
+        });
+      } catch(e) {
+        return res.status(500).json({ error: "Error parsing Google response" });
+      }
+    });
+  }).on('error', (e) => {
+    return res.status(500).json({ error: "Failed to contact Google servers" });
+  });
+});
+
 module.exports = router;
