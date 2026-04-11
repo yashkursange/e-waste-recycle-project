@@ -82,9 +82,9 @@ const Signup = () => {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-gradient-to-b from-eco-green-50 via-white to-white flex items-center justify-center p-6">
+      <main className="min-h-screen bg-gradient-to-b from-eco-green-50 via-white to-white dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300 flex items-center justify-center p-6">
         <div className="w-full max-w-4xl">
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-transparent dark:border-slate-700 transition-colors duration-300 dark:[&_h1]:text-white dark:[&_h2]:text-white dark:[&_h3]:text-white dark:[&_p]:text-slate-300 dark:[&_label]:text-slate-200 dark:[&_input]:bg-slate-800 dark:[&_input]:text-white dark:[&_input]:border-slate-700 dark:[&_input]:placeholder:text-slate-400">
             <div className="w-full md:w-1/2 p-8 md:p-12">
               <div className="flex items-center gap-3 mb-6">
                 <Recycle className="w-8 h-8 text-eco-green-600" role="img" aria-label="Recycle icon" />
@@ -116,7 +116,7 @@ const Signup = () => {
                     className={`w-full px-4 py-3 rounded-lg border-2 ${errors.name
                       ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
                       : "border-gray-200 focus:border-eco-green-500 focus:ring-4 focus:ring-eco-green-100"
-                      } focus:outline-none bg-white text-gray-900 transition-all duration-200 placeholder:text-gray-400`}
+                      } focus:outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-white transition-all duration-200 placeholder:text-gray-400 dark:placeholder:text-slate-400`}
                     placeholder="John Doe"
                   />
                   {errors.name && (
@@ -147,7 +147,7 @@ const Signup = () => {
                     className={`w-full px-4 py-3 rounded-lg border-2 ${errors.email
                       ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
                       : "border-gray-200 focus:border-eco-green-500 focus:ring-4 focus:ring-eco-green-100"
-                      } focus:outline-none bg-white text-gray-900 transition-all duration-200 placeholder:text-gray-400`}
+                      } focus:outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-white transition-all duration-200 placeholder:text-gray-400 dark:placeholder:text-slate-400`}
                     placeholder="you@example.com"
                   />
                   {errors.email && (
@@ -179,7 +179,7 @@ const Signup = () => {
                       className={`w-full px-4 py-3 rounded-lg border-2 ${errors.password
                         ? "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100"
                         : "border-gray-200 focus:border-eco-green-500 focus:ring-4 focus:ring-eco-green-100"
-                        } focus:outline-none bg-white text-gray-900 transition-all duration-200 pr-12 placeholder:text-gray-400`}
+                        } focus:outline-none bg-white dark:bg-slate-800 text-gray-900 dark:text-white transition-all duration-200 pr-12 placeholder:text-gray-400 dark:placeholder:text-slate-400`}
                       placeholder="At least 6 characters"
                     />
                     <button
@@ -187,7 +187,7 @@ const Signup = () => {
                       onClick={() => setShowPassword((s) => !s)}
                       aria-label={showPassword ? "Hide password" : "Show password"}
                       aria-pressed={showPassword}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-500 hover:text-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-eco-green-400 transition-colors duration-200"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-eco-green-400 transition-colors duration-200"
                     >
                       {showPassword ? (
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

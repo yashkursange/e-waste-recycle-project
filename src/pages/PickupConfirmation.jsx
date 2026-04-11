@@ -16,9 +16,9 @@ const PickupConfirmation = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-stone-100 via-stone-50 to-slate-100 flex items-center justify-center px-4 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-stone-100 via-stone-50 to-slate-100 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 flex items-center justify-center px-4 py-12 transition-colors duration-300">
         <div className="max-w-2xl w-full">
-          <div className="bg-stone-50 rounded-3xl shadow-sm p-8 md:p-12 border border-stone-200">
+          <div className="bg-stone-50 dark:bg-slate-800 rounded-3xl shadow-sm p-8 md:p-12 border border-stone-200 dark:border-slate-700 transition-colors duration-300 dark:[&_h1]:text-white dark:[&_h2]:text-white dark:[&_h3]:text-white dark:[&_p]:text-slate-300 dark:[&_span]:text-slate-300">
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-24 h-24 bg-emerald-50 rounded-full mb-6 border border-emerald-100">
                 <CheckCircle className="w-12 h-12 text-emerald-600" />
@@ -31,7 +31,7 @@ const PickupConfirmation = () => {
               </p>
             </div>
 
-            <div className="bg-emerald-50 rounded-2xl p-6 mb-8 border border-emerald-100">
+            <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl p-6 mb-8 border border-emerald-100 dark:border-emerald-800">
               <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
                 <Clipboard className="w-5 h-5 text-emerald-700" />
                 Pickup Details
@@ -58,7 +58,7 @@ const PickupConfirmation = () => {
               </div>
             </div>
 
-            <div className="bg-sky-50 rounded-2xl p-6 mb-8 border border-sky-100">
+            <div className="bg-sky-50 dark:bg-sky-900/20 rounded-2xl p-6 mb-8 border border-sky-100 dark:border-sky-800">
               <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
                 <Bell className="w-5 h-5 text-sky-700" />
                 What Happens Next?
@@ -109,7 +109,7 @@ const PickupConfirmation = () => {
               </button>
               <button
                 onClick={() => navigate("/")}
-                className="flex-1 bg-stone-200 text-slate-800 py-4 px-6 rounded-xl font-bold text-lg hover:bg-stone-300 transition-all"
+                className="flex-1 bg-stone-200 dark:bg-slate-700 text-slate-800 dark:text-slate-100 py-4 px-6 rounded-xl font-bold text-lg hover:bg-stone-300 dark:hover:bg-slate-600 transition-all"
               >
                 Go to Dashboard
               </button>

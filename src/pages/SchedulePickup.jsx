@@ -76,9 +76,9 @@ const SchedulePickup = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-stone-100 via-stone-50 to-slate-100 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-br from-stone-100 via-stone-50 to-slate-100 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-stone-50 rounded-2xl shadow-sm p-6 sm:p-8 lg:p-10 border border-stone-200">
+          <div className="bg-stone-50 dark:bg-slate-800 rounded-2xl shadow-sm p-6 sm:p-8 lg:p-10 border border-stone-200 dark:border-slate-700 transition-colors duration-300 dark:[&_h1]:text-white dark:[&_h2]:text-white dark:[&_label]:text-slate-200 dark:[&_p]:text-slate-300 dark:[&_input]:bg-slate-900 dark:[&_input]:text-white dark:[&_input]:border-slate-700 dark:[&_textarea]:bg-slate-900 dark:[&_textarea]:text-white dark:[&_textarea]:border-slate-700 dark:[&_select]:bg-slate-900 dark:[&_select]:text-white dark:[&_select]:border-slate-700">
             <div className="mb-8 text-center">
               <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 mb-3">
                 Schedule E-Waste Pickup
@@ -89,7 +89,7 @@ const SchedulePickup = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="bg-emerald-50 rounded-xl p-6 space-y-5 border border-emerald-100">
+              <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-6 space-y-5 border border-emerald-100 dark:border-emerald-800">
                 <h2 className="text-lg font-bold text-emerald-800 flex items-center gap-3">
                   <Trash2 className="w-5 h-5 text-emerald-700" />
                   E-Waste Details
@@ -180,7 +180,7 @@ const SchedulePickup = () => {
                 </div>
               </div>
 
-              <div className="bg-sky-50 rounded-xl p-6 space-y-5 border border-sky-100">
+              <div className="bg-sky-50 dark:bg-sky-900/20 rounded-xl p-6 space-y-5 border border-sky-100 dark:border-sky-800">
                 <h2 className="text-lg font-bold text-sky-800 flex items-center gap-3">
                   <MapPin className="w-5 h-5 text-sky-700" />
                   Pickup Details
@@ -276,7 +276,7 @@ const SchedulePickup = () => {
                 </div>
               </div>
 
-              <div className="bg-violet-50 rounded-xl p-6 space-y-5 border border-violet-100">
+              <div className="bg-violet-50 dark:bg-violet-900/20 rounded-xl p-6 space-y-5 border border-violet-100 dark:border-violet-800">
                 <h2 className="text-lg font-bold text-violet-800 flex items-center gap-3">
                   <Phone className="w-5 h-5 text-violet-700" />
                   Contact Details
@@ -301,7 +301,7 @@ const SchedulePickup = () => {
               </div>
 
               <div className="pt-4 space-y-4">
-                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-center flex items-center justify-center gap-2">
+                <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-4 text-center flex items-center justify-center gap-2">
                   <CheckCircle className="w-4 h-4 text-emerald-700" />
                   <p className="text-sm text-emerald-800 font-medium">
                     Pickup is free and handled by certified recyclers

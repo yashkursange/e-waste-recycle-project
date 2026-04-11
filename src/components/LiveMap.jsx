@@ -86,8 +86,8 @@ const LiveMap = ({ userLocation, driverLocation, autoUpdate = false }) => {
   ];
 
   return (
-    <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8">
-      <h2 className="text-xl font-semibold text-gray-800 mb-6">Live Tracking</h2>
+    <div className="bg-white dark:bg-slate-800 border border-transparent dark:border-slate-700 rounded-3xl shadow-lg p-6 sm:p-8 transition-colors duration-300">
+      <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-6">Live Tracking</h2>
       
       <div 
         className="w-full rounded-2xl overflow-hidden shadow-md"
@@ -135,8 +135,8 @@ const LiveMap = ({ userLocation, driverLocation, autoUpdate = false }) => {
       </div>
       
       {/* Distance info */}
-      <div className="mt-4 p-4 bg-green-50 rounded-xl border border-green-200">
-        <p className="text-sm text-green-800">
+      <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800 transition-colors duration-300">
+        <p className="text-sm text-green-800 dark:text-green-300">
           <span className="font-semibold">Driver is en route</span> • Estimated arrival: 15 minutes
         </p>
       </div>

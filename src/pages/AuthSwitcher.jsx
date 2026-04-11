@@ -9,7 +9,7 @@ const AuthSwitcher = () => {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-gradient-to-b from-eco-green-50 via-white to-white flex items-center justify-center p-6">
+      <main className="min-h-screen bg-gradient-to-b from-eco-green-50 via-white to-white dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300 flex items-center justify-center p-6">
       <div className="w-full max-w-4xl">
         {isLoginActive ? (
           <LoginForm onSwitchToSignup={() => setIsLoginActive(false)} />
@@ -59,7 +59,7 @@ const LoginForm = ({ onSwitchToSignup }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-transparent dark:border-slate-700 transition-colors duration-300 dark:[&_h1]:text-white dark:[&_h2]:text-white dark:[&_h3]:text-white dark:[&_p]:text-slate-300 dark:[&_label]:text-slate-200 dark:[&_input]:bg-slate-800 dark:[&_input]:text-white dark:[&_input]:border-slate-700 dark:[&_input]:placeholder:text-slate-400 dark:[&_button]:text-slate-200 dark:[&_.divider-line]:bg-slate-700">
       <div className="w-full md:w-1/2 p-8 md:p-12">
         <div className="flex items-center gap-3 mb-6">
           <Recycle className="w-8 h-8 text-eco-green-600" />
@@ -185,7 +185,7 @@ const LoginForm = ({ onSwitchToSignup }) => {
         </p>
       </div>
 
-      <aside className="hidden md:flex w-1/2 bg-gradient-to-br from-eco-green-50 to-eco-blue-50 items-center justify-center p-8">
+      <aside className="hidden md:flex w-1/2 bg-gradient-to-br from-eco-green-50 to-eco-blue-50 dark:from-slate-800 dark:to-slate-700 items-center justify-center p-8 transition-colors duration-300">
         <div className="max-w-xs text-center">
           <Globe className="w-20 h-20 mx-auto mb-6 text-eco-green-600" />
           <h3 className="text-2xl font-bold text-gray-900 mb-3">Welcome back</h3>
@@ -254,7 +254,7 @@ const SignupForm = ({ onSwitchToLogin }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-transparent dark:border-slate-700 transition-colors duration-300 dark:[&_h1]:text-white dark:[&_h2]:text-white dark:[&_h3]:text-white dark:[&_p]:text-slate-300 dark:[&_label]:text-slate-200 dark:[&_input]:bg-slate-800 dark:[&_input]:text-white dark:[&_input]:border-slate-700 dark:[&_input]:placeholder:text-slate-400 dark:[&_button]:text-slate-200 dark:[&_.divider-line]:bg-slate-700">
       <div className="w-full md:w-1/2 p-8 md:p-12">
         <div className="flex items-center gap-3 mb-6">
           <Recycle className="w-8 h-8 text-eco-green-600" />

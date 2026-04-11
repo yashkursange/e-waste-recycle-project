@@ -58,7 +58,7 @@ const PickupTracking = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-green-50/20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-green-50/20 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300">
       {/* Modern Header with Soft Gradient */}
       <div 
         className="relative py-16 overflow-hidden"
@@ -77,27 +77,27 @@ const PickupTracking = () => {
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 bg-white rounded-2xl shadow-sm">
+            <div className="p-3 bg-white dark:bg-slate-800 rounded-2xl shadow-sm transition-colors duration-300">
               <Navigation className="w-8 h-8 text-green-600" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900">Track Your Pickup</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">Track Your Pickup</h1>
           </div>
-          <p className="text-lg text-gray-600 ml-16">Stay updated on your e-waste collection in real time</p>
+          <p className="text-lg text-gray-600 dark:text-slate-300 ml-16">Stay updated on your e-waste collection in real time</p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         
         {/* Modern Horizontal Progress Stepper */}
-        <div className="bg-white rounded-3xl shadow-lg px-6 sm:px-8 lg:px-12 py-8 lg:py-10 mb-10">
-          <h2 className="text-xl font-semibold text-gray-800 mb-8 lg:mb-10">Delivery Progress</h2>
+        <div className="bg-white dark:bg-slate-800 border border-transparent dark:border-slate-700 rounded-3xl shadow-lg px-6 sm:px-8 lg:px-12 py-8 lg:py-10 mb-10 transition-colors duration-300">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-8 lg:mb-10">Delivery Progress</h2>
           
           {/* Desktop Stepper */}
           <div className="hidden md:block">
             <div className="relative">
               {/* Progress Line Background */}
               <div 
-                className="absolute top-8 left-0 right-0 h-0.5 bg-gray-200"
+                className="absolute top-8 left-0 right-0 h-0.5 bg-gray-200 dark:bg-slate-700"
                 style={{ zIndex: 0 }}
               ></div>
               
@@ -209,8 +209,8 @@ const PickupTracking = () => {
           
           {/* Pickup Details Card */}
           <div className="lg:col-span-2 space-y-6 lg:space-y-8">
-            <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8">
-              <h2 className="text-xl font-semibold text-gray-800 mb-6 lg:mb-8">Pickup Information</h2>
+            <div className="bg-white dark:bg-slate-800 border border-transparent dark:border-slate-700 rounded-3xl shadow-lg p-6 sm:p-8 transition-colors duration-300">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-6 lg:mb-8">Pickup Information</h2>
               
               <div className="grid sm:grid-cols-2 gap-6 lg:gap-8">
                 <div className="flex items-start gap-4">
@@ -218,8 +218,8 @@ const PickupTracking = () => {
                     <Package className="w-6 h-6 text-gray-700" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 font-medium mb-1">Pickup ID</p>
-                    <p className="text-base font-medium text-gray-900">{pickupDetails.id}</p>
+                    <p className="text-sm text-gray-500 dark:text-slate-400 font-medium mb-1">Pickup ID</p>
+                    <p className="text-base font-medium text-gray-900 dark:text-white">{pickupDetails.id}</p>
                   </div>
                 </div>
 
@@ -228,9 +228,9 @@ const PickupTracking = () => {
                     <Calendar className="w-6 h-6 text-gray-700" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 font-medium mb-1">Date & Time</p>
-                    <p className="text-base font-medium text-gray-900">{pickupDetails.date}</p>
-                    <p className="text-sm text-gray-600 mt-0.5">{pickupDetails.time}</p>
+                    <p className="text-sm text-gray-500 dark:text-slate-400 font-medium mb-1">Date & Time</p>
+                    <p className="text-base font-medium text-gray-900 dark:text-white">{pickupDetails.date}</p>
+                    <p className="text-sm text-gray-600 dark:text-slate-300 mt-0.5">{pickupDetails.time}</p>
                   </div>
                 </div>
 
@@ -239,8 +239,8 @@ const PickupTracking = () => {
                     <MapPin className="w-6 h-6 text-gray-700" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 font-medium mb-1">Address</p>
-                    <p className="text-base font-medium text-gray-900">{pickupDetails.address}</p>
+                    <p className="text-sm text-gray-500 dark:text-slate-400 font-medium mb-1">Address</p>
+                    <p className="text-base font-medium text-gray-900 dark:text-white">{pickupDetails.address}</p>
                   </div>
                 </div>
 
@@ -249,8 +249,8 @@ const PickupTracking = () => {
                     <User className="w-6 h-6 text-gray-700" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 font-medium mb-1">Driver Name</p>
-                    <p className="text-base font-medium text-gray-900">{pickupDetails.driverName}</p>
+                    <p className="text-sm text-gray-500 dark:text-slate-400 font-medium mb-1">Driver Name</p>
+                    <p className="text-base font-medium text-gray-900 dark:text-white">{pickupDetails.driverName}</p>
                   </div>
                 </div>
               </div>
@@ -281,8 +281,8 @@ const PickupTracking = () => {
           <div className="space-y-6">
             
             {/* Quick Actions Card */}
-            <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-7">
-              <h3 className="text-lg font-semibold text-gray-800 mb-6">Quick Actions</h3>
+            <div className="bg-white dark:bg-slate-800 border border-transparent dark:border-slate-700 rounded-3xl shadow-lg p-6 sm:p-7 transition-colors duration-300">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-6">Quick Actions</h3>
               
               <div className="space-y-3">
                 <button 
@@ -293,14 +293,14 @@ const PickupTracking = () => {
                 </button>
 
                 <button 
-                  className="w-full px-6 py-3.5 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 border-2 border-gray-300 hover:border-gray-400 hover:scale-[1.02]"
+                  className="w-full px-6 py-3.5 bg-white dark:bg-slate-900 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-100 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 border-2 border-gray-300 dark:border-slate-600 hover:border-gray-400 dark:hover:border-slate-500 hover:scale-[1.02]"
                 >
                   <Calendar className="w-5 h-5" />
                   Reschedule Pickup
                 </button>
 
                 <button 
-                  className="w-full px-6 py-3.5 bg-white hover:bg-red-50 text-red-600 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 border-2 border-red-300 hover:border-red-400 hover:scale-[1.02]"
+                  className="w-full px-6 py-3.5 bg-white dark:bg-slate-900 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-300 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 border-2 border-red-300 dark:border-red-700 hover:border-red-400 hover:scale-[1.02]"
                 >
                   Cancel Pickup
                 </button>
@@ -308,14 +308,14 @@ const PickupTracking = () => {
             </div>
 
             {/* Help Card */}
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-3xl shadow-lg p-6 sm:p-7 border border-green-100">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-slate-800 dark:to-slate-700 rounded-3xl shadow-lg p-6 sm:p-7 border border-green-100 dark:border-slate-700 transition-colors duration-300">
               <div className="flex items-center gap-2 mb-3">
-                <div className="p-2 bg-white rounded-lg">
+                <div className="p-2 bg-white dark:bg-slate-900 rounded-lg transition-colors duration-300">
                   <Phone className="w-5 h-5 text-green-600" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800">Need Help?</h3>
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Need Help?</h3>
               </div>
-              <p className="text-sm text-gray-700 mb-5 leading-relaxed">
+              <p className="text-sm text-gray-700 dark:text-slate-300 mb-5 leading-relaxed">
                 Our support team is here to assist you with any questions about your pickup.
               </p>
               <button 

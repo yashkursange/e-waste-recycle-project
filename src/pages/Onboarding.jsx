@@ -79,21 +79,21 @@ const Onboarding = () => {
   const currentData = onboardingSteps[currentStep];
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-eco-green-50 via-white to-eco-blue-50 flex items-center justify-center p-4 md:p-6 overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-b from-eco-green-50 via-white to-eco-blue-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 flex items-center justify-center p-4 md:p-6 overflow-hidden transition-colors duration-300">
       <div className="w-full max-w-2xl">
         {currentStep < onboardingSteps.length - 1 && (
           <div className="flex justify-end mb-4 animate-fadeIn">
             <button
               onClick={handleSkip}
               aria-label="Skip onboarding"
-              className="text-sm text-gray-500 hover:text-gray-700 font-medium transition-all duration-200 px-5 py-2 rounded-lg hover:bg-white hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-300 focus:bg-white"
+              className="text-sm text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-white font-medium transition-all duration-200 px-5 py-2 rounded-lg hover:bg-white dark:hover:bg-slate-800 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-slate-600 focus:bg-white dark:focus:bg-slate-800"
             >
               Skip onboarding →
             </button>
           </div>
         )}
 
-        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 transition-all duration-500">
+        <div className="bg-white dark:bg-slate-800 border border-transparent dark:border-slate-700 rounded-3xl shadow-2xl p-8 md:p-12 transition-all duration-500 dark:[&_h1]:text-white dark:[&_h2]:text-white dark:[&_p]:text-slate-300">
           <div className="text-center mb-8">
             <div
               key={`icon-${currentStep}`}
@@ -138,7 +138,7 @@ const Onboarding = () => {
                     ? "w-12 h-3 bg-eco-green-600 shadow-lg scale-110"
                     : index < currentStep
                       ? "w-3 h-3 bg-eco-green-500 hover:bg-eco-green-600 hover:scale-125 shadow-md"
-                      : "w-3 h-3 bg-gray-300 hover:bg-gray-400 hover:scale-110"
+                        : "w-3 h-3 bg-gray-300 dark:bg-slate-600 hover:bg-gray-400 dark:hover:bg-slate-500 hover:scale-110"
                   }`}
               />
             ))}
@@ -157,7 +157,7 @@ const Onboarding = () => {
               <button
                 onClick={handleBack}
                 aria-label="Go back to previous step"
-                className="w-full bg-transparent border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-600 hover:text-gray-800 font-medium py-3 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:border-gray-400"
+                className="w-full bg-transparent border-2 border-gray-200 dark:border-slate-600 hover:border-gray-300 dark:hover:border-slate-500 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-600 dark:text-slate-300 hover:text-gray-800 dark:hover:text-white font-medium py-3 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-slate-600 focus:border-gray-400"
               >
                 Back
               </button>
@@ -166,7 +166,7 @@ const Onboarding = () => {
         </div>
 
         <div className="text-center mt-6 animate-fadeIn">
-          <p className="text-sm text-gray-500 font-medium" aria-live="polite">
+          <p className="text-sm text-gray-500 dark:text-slate-400 font-medium" aria-live="polite">
             Step {currentStep + 1} of {onboardingSteps.length}
           </p>
         </div>

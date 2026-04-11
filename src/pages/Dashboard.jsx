@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, Package, Gift, MapPin, TrendingUp, Leaf, Award, Truck, CheckCircle, Plus } from "lucide-react";
+import useTheme from "../hooks/useTheme";
 
 const Dashboard = () => {
+  const { isDark } = useTheme();
   const [dashboardData, setDashboardData] = useState({
     upcomingPickup: null,
     impactStats: [],
@@ -64,22 +66,24 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center p-8 bg-[#F1F8F4]"><div className="text-xl font-bold text-[#2E7D32]">Loading dashboard...</div></div>;
+    return <div className="min-h-screen flex items-center justify-center p-8 bg-[#F1F8F4] dark:bg-slate-900 transition-colors duration-300"><div className="text-xl font-bold text-[#2E7D32]">Loading dashboard...</div></div>;
   }
 
   if (error) {
-    return <div className="min-h-screen flex items-center justify-center p-8 bg-[#F1F8F4]"><div className="text-xl font-bold text-red-600 bg-red-50 p-6 rounded-2xl">{error}</div></div>;
+    return <div className="min-h-screen flex items-center justify-center p-8 bg-[#F1F8F4] dark:bg-slate-900 transition-colors duration-300"><div className="text-xl font-bold text-red-600 bg-red-50 dark:bg-red-900/20 p-6 rounded-2xl">{error}</div></div>;
   }
 
   const { upcomingPickup, impactStats, recentActivity } = dashboardData;
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F1F8F4' }}>
+    <div className="min-h-screen transition-colors duration-300" style={{ backgroundColor: isDark ? '#0f172a' : '#F1F8F4' }}>
       {/* Header Banner */}
       <div
         className="mb-10"
         style={{
-          background: 'linear-gradient(135deg, #E2EFE6 0%, #d4e7d9 100%)',
+          background: isDark
+            ? 'linear-gradient(135deg, #1f2937 0%, #0f172a 100%)'
+            : 'linear-gradient(135deg, #E2EFE6 0%, #d4e7d9 100%)',
           boxShadow: '0 4px 12px rgba(46, 125, 50, 0.08)'
         }}
       >
@@ -88,7 +92,7 @@ const Dashboard = () => {
             <Leaf className="w-10 h-10" style={{ color: '#2E7D32' }} />
             <h1 className="text-5xl font-bold" style={{ color: '#2E7D32' }}>Welcome Back</h1>
           </div>
-          <p className="text-lg" style={{ color: '#5a7a5e' }}>Here's your recycling overview</p>
+          <p className="text-lg" style={{ color: isDark ? '#cbd5e1' : '#5a7a5e' }}>Here's your recycling overview</p>
         </div>
       </div>
 
@@ -96,14 +100,14 @@ const Dashboard = () => {
 
         {/* Upcoming Pickup Card */}
         <div className="mb-10">
-          <h2 className="text-2xl font-bold text-gray-800 mb-5">Upcoming Pickup</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-5">Upcoming Pickup</h2>
           {upcomingPickup ? (
             <div
               className="rounded-2xl shadow-lg border-l-8 p-8 relative"
               style={{
-                backgroundColor: '#fafdfb',
+                backgroundColor: isDark ? '#1f2937' : '#fafdfb',
                 borderLeftColor: '#2E7D32',
-                border: '1px solid rgba(46, 125, 50, 0.1)'
+                border: isDark ? '1px solid rgba(71, 85, 105, 0.8)' : '1px solid rgba(46, 125, 50, 0.1)'
               }}
             >
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
@@ -112,8 +116,8 @@ const Dashboard = () => {
                     <Truck className="w-8 h-8" style={{ color: '#2E7D32' }} />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 font-medium mb-1">Pickup ID</p>
-                    <p className="text-xl font-bold text-gray-800">{upcomingPickup.id}</p>
+                    <p className="text-sm text-gray-500 dark:text-slate-400 font-medium mb-1">Pickup ID</p>
+                    <p className="text-xl font-bold text-gray-800 dark:text-white">{upcomingPickup.id}</p>
                   </div>
                 </div>
                 <span
@@ -128,22 +132,22 @@ const Dashboard = () => {
                 <div className="flex items-start gap-3">
                   <Calendar className="w-5 h-5 mt-1" style={{ color: '#2E7D32' }} />
                   <div>
-                    <p className="text-sm text-gray-500 font-medium mb-1">Scheduled Date</p>
-                    <p className="font-semibold text-gray-800">{upcomingPickup.date}</p>
+                    <p className="text-sm text-gray-500 dark:text-slate-400 font-medium mb-1">Scheduled Date</p>
+                    <p className="font-semibold text-gray-800 dark:text-white">{upcomingPickup.date}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Package className="w-5 h-5 mt-1" style={{ color: '#2E7D32' }} />
                   <div>
-                    <p className="text-sm text-gray-500 font-medium mb-1">Time Slot</p>
-                    <p className="font-semibold text-gray-800">{upcomingPickup.timeSlot}</p>
+                    <p className="text-sm text-gray-500 dark:text-slate-400 font-medium mb-1">Time Slot</p>
+                    <p className="font-semibold text-gray-800 dark:text-white">{upcomingPickup.timeSlot}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 mt-1" style={{ color: '#2E7D32' }} />
                   <div>
-                    <p className="text-sm text-gray-500 font-medium mb-1">Address</p>
-                    <p className="font-semibold text-gray-800">{upcomingPickup.address}</p>
+                    <p className="text-sm text-gray-500 dark:text-slate-400 font-medium mb-1">Address</p>
+                    <p className="font-semibold text-gray-800 dark:text-white">{upcomingPickup.address}</p>
                   </div>
                 </div>
               </div>
@@ -160,12 +164,12 @@ const Dashboard = () => {
               </button>
             </div>
           ) : (
-            <div className="rounded-2xl shadow-lg p-8 text-center" style={{ backgroundColor: '#fafdfb', border: '1px solid rgba(46, 125, 50, 0.1)' }}>
+            <div className="rounded-2xl shadow-lg p-8 text-center" style={{ backgroundColor: isDark ? '#1f2937' : '#fafdfb', border: isDark ? '1px solid rgba(71, 85, 105, 0.8)' : '1px solid rgba(46, 125, 50, 0.1)' }}>
               <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-[#E2EFE6]">
                 <Truck className="w-8 h-8 text-[#2E7D32]" />
               </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">No Upcoming Pickups</h3>
-              <p className="text-gray-500 mb-6">You don't have any e-waste pickups scheduled at the moment.</p>
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">No Upcoming Pickups</h3>
+              <p className="text-gray-500 dark:text-slate-300 mb-6">You don't have any e-waste pickups scheduled at the moment.</p>
               <button
                 className="px-6 py-2 text-white font-semibold rounded-lg shadow-md hover:bg-[#236025] transition"
                 style={{ backgroundColor: '#2E7D32' }}
@@ -178,7 +182,7 @@ const Dashboard = () => {
 
         {/* Quick Actions Grid */}
         <div className="mb-10">
-          <h2 className="text-2xl font-bold text-gray-800 mb-5">Quick Actions</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-5">Quick Actions</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
             {quickActions.map((action, index) => {
               const Icon = action.icon;
@@ -187,8 +191,8 @@ const Dashboard = () => {
                   key={index}
                   className="rounded-2xl p-7 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                   style={{
-                    backgroundColor: '#fafdfb',
-                    border: '1px solid rgba(46, 125, 50, 0.1)'
+                    backgroundColor: isDark ? '#1f2937' : '#fafdfb',
+                    border: isDark ? '1px solid rgba(71, 85, 105, 0.8)' : '1px solid rgba(46, 125, 50, 0.1)'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.borderColor = 'rgba(46, 125, 50, 0.3)';
@@ -203,7 +207,7 @@ const Dashboard = () => {
                     <div className="p-4 rounded-xl mb-4" style={{ backgroundColor: '#E2EFE6' }}>
                       <Icon className="w-8 h-8" style={{ color: '#2E7D32' }} />
                     </div>
-                    <p className="font-semibold text-gray-800">{action.title}</p>
+                    <p className="font-semibold text-gray-800 dark:text-white">{action.title}</p>
                   </div>
                 </button>
               );
@@ -215,7 +219,7 @@ const Dashboard = () => {
         <div className="mb-10">
           <div className="flex items-center gap-2 mb-5">
             <TrendingUp className="w-7 h-7" style={{ color: '#2E7D32' }} />
-            <h2 className="text-2xl font-bold text-gray-800">Your Environmental Impact</h2>
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Your Environmental Impact</h2>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
             {(impactStats && impactStats.length > 0 ? impactStats : [
@@ -229,16 +233,16 @@ const Dashboard = () => {
                   key={index}
                   className="rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300"
                   style={{
-                    backgroundColor: '#E2EFE6',
-                    border: '1px solid rgba(46, 125, 50, 0.15)'
+                    backgroundColor: isDark ? '#1f2937' : '#E2EFE6',
+                    border: isDark ? '1px solid rgba(71, 85, 105, 0.8)' : '1px solid rgba(46, 125, 50, 0.15)'
                   }}
                 >
                   <Icon className="w-12 h-12 mb-4" style={{ color: '#2E7D32' }} />
                   <div className="mb-2">
                     <span className="text-5xl font-bold" style={{ color: '#2E7D32' }}>{stat.value}</span>
-                    <span className="text-2xl font-semibold text-gray-600 ml-1">{stat.unit}</span>
+                    <span className="text-2xl font-semibold text-gray-600 dark:text-slate-300 ml-1">{stat.unit}</span>
                   </div>
-                  <p className="text-gray-700 font-medium text-lg">{stat.label}</p>
+                  <p className="text-gray-700 dark:text-slate-300 font-medium text-lg">{stat.label}</p>
                 </div>
               );
             })}
@@ -249,11 +253,11 @@ const Dashboard = () => {
         <div
           className="rounded-2xl shadow-lg p-9"
           style={{
-            backgroundColor: '#fafdfb',
-            border: '1px solid rgba(46, 125, 50, 0.1)'
+            backgroundColor: isDark ? '#1f2937' : '#fafdfb',
+            border: isDark ? '1px solid rgba(71, 85, 105, 0.8)' : '1px solid rgba(46, 125, 50, 0.1)'
           }}
         >
-          <h2 className="text-2xl font-bold text-gray-800 mb-7">Recent Activity</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-7">Recent Activity</h2>
           <div className="relative">
             {/* Timeline line */}
             <div className="absolute left-4 top-0 bottom-0 w-0.5" style={{ backgroundColor: '#d4e7d9' }}></div>
@@ -270,7 +274,7 @@ const Dashboard = () => {
                           className="w-8 h-8 rounded-full flex items-center justify-center border-4 shadow-lg"
                           style={{
                             backgroundColor: '#2E7D32',
-                            borderColor: '#fafdfb'
+                            borderColor: isDark ? '#1f2937' : '#fafdfb'
                           }}
                         >
                           <div className="w-2 h-2 bg-white rounded-full"></div>
@@ -282,13 +286,13 @@ const Dashboard = () => {
                         <div className="flex items-start justify-between gap-4 flex-wrap">
                           <div className="flex items-center gap-3">
                             <Icon className="w-5 h-5" style={{ color: '#2E7D32' }} />
-                            <p className="text-gray-800 font-semibold text-lg">{activity.text}</p>
+                            <p className="text-gray-800 dark:text-white font-semibold text-lg">{activity.text}</p>
                           </div>
                           <p
                             className="text-sm font-medium px-3 py-1 rounded-full"
                             style={{
                               color: '#5a7a5e',
-                              backgroundColor: '#E2EFE6'
+                              backgroundColor: isDark ? '#0f172a' : '#E2EFE6'
                             }}
                           >
                             {activity.date}
@@ -299,7 +303,7 @@ const Dashboard = () => {
                   );
                 })
               ) : (
-                <p className="text-gray-500 italic">No recent activity found.</p>
+                <p className="text-gray-500 dark:text-slate-300 italic">No recent activity found.</p>
               )}
             </div>
           </div>
