@@ -1,78 +1,92 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Recycle, Bell, Clock, Trash2, CheckCircle2, Package, Trophy, AlertCircle, ChevronRight } from "lucide-react";
+import { Recycle, Bell, Clock, Trash2, CheckCircle2, Package, Trophy, AlertCircle, ChevronRight, User, LogOut } from "lucide-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
+  const isLoggedIn = !!localStorage.getItem("token");
 
-  // Mock notifications - in a real app, this would come from global state or context
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: "pickup",
-      title: "Pickup Scheduled",
-      message: "Your e-waste pickup has been scheduled for Dec 28, 2025 at 2:00 PM",
-      timestamp: "2 hours ago",
-      isRead: false,
-      icon: Package,
-    },
-    {
-      id: 2,
-      type: "reward",
-      title: "Reward Unlocked",
-      message: "You've earned 250 EcoPoints! Collect more to unlock premium rewards.",
-      timestamp: "5 hours ago",
-      isRead: false,
-      icon: Trophy,
-    },
-    {
-      id: 3,
-      type: "system",
-      title: "System Maintenance",
-      message: "Scheduled maintenance on Dec 25, 2025. Service may be unavailable for 2 hours.",
-      timestamp: "1 day ago",
-      isRead: true,
-      icon: AlertCircle,
-    },
-    {
-      id: 4,
-      type: "pickup",
-      title: "Pickup Completed",
-      message: "Your previous pickup has been completed successfully. 12 kg of e-waste recycled!",
-      timestamp: "3 days ago",
-      isRead: true,
-      icon: CheckCircle2,
-    },
-    {
-      id: 5,
-      type: "reward",
-      title: "Bonus Points Available",
-      message: "Limited time offer! Get 50% extra EcoPoints on your next pickup.",
-      timestamp: "5 days ago",
-      isRead: true,
-      icon: Trophy,
-    },
-  ]);
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const fetchNotificationsAndProfile = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      
+      try {
+        const notifRes = await fetch("http://localhost:5000/notifications", {
+          headers: { Authorization: "Bearer " + token }
+        });
+        if (notifRes.ok) {
+          const data = await notifRes.json();
+          const mapped = data.map(n => {
+            let icon = AlertCircle;
+            if(n.type === 'pickup') icon = Package;
+            if(n.type === 'reward') icon = Trophy;
+            if(n.type === 'system') icon = Bell;
+            return { ...n, icon };
+          });
+          setNotifications(mapped);
+        }
+
+        const profileRes = await fetch("http://localhost:5000/profile", {
+          headers: { Authorization: "Bearer " + token }
+        });
+        if (profileRes.ok) {
+          const pData = await profileRes.json();
+          setUserProfile(pData);
+        }
+      } catch (err) {
+        console.error("Failed to fetch navbar data", err);
+      }
+    };
+    fetchNotificationsAndProfile();
+  }, []);
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
-  const latestNotifications = notifications.slice(0, 4); // Show latest 4 in dropdown
+  const latestNotifications = notifications.slice(0, 4);
 
-  const handleMarkAsRead = (id) => {
-    setNotifications((prev) =>
-      prev.map((notif) =>
-        notif.id === id ? { ...notif, isRead: true } : notif
-      )
-    );
+  const handleMarkAsRead = async (id) => {
+    const notif = notifications.find(n => n.id === id);
+    if (!notif) return;
+    try {
+      await fetch("http://localhost:5000/notifications/read/" + id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + localStorage.getItem("token") },
+        body: JSON.stringify({ isRead: true })
+      });
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+      );
+    } catch(err) { console.error(err); }
   };
 
-  const handleDelete = (id) => {
-    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await fetch("http://localhost:5000/notifications/" + id, {
+        method: "DELETE",
+        headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+      });
+      setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+    } catch(err) { console.error(err); }
   };
 
   const handleViewAll = () => {
     navigate("/notifications");
     setShowNotificationDropdown(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/";
+  };
+
+  const getInitials = () => {
+    if (!userProfile?.name) return "U";
+    return userProfile.name.charAt(0).toUpperCase();
   };
 
   return (
@@ -234,27 +248,80 @@ const Navbar = () => {
               )}
             </div>
 
-            <Link
-              to="/login"
-              className="text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-medium transition"
-            >
-              Login
-            </Link>
-            <Link
-              to="/signup"
-              className="bg-emerald-600 text-white px-6 py-2 rounded-full hover:bg-emerald-700 transition shadow-sm"
-            >
-              Sign Up
-            </Link>
+            {isLoggedIn ? (
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                  className="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/50 border-2 border-emerald-500 overflow-hidden shadow-sm hover:ring-2 hover:ring-emerald-400 focus:outline-none transition-all"
+                >
+                  {userProfile?.picture ? (
+                    <img src={userProfile.picture} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-emerald-700 dark:text-emerald-400 font-bold text-lg">
+                      {getInitials()}
+                    </span>
+                  )}
+                </button>
+
+                {showProfileDropdown && (
+                  <div className="absolute right-0 mt-3 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden z-50">
+                    <div className="py-2">
+                       <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700">
+                         <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                           {userProfile?.name || "User"}
+                         </p>
+                         <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                           {userProfile?.email}
+                         </p>
+                       </div>
+                       <Link
+                         to="/profile"
+                         onClick={() => setShowProfileDropdown(false)}
+                         className="flex items-center px-4 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-700 transition-colors"
+                       >
+                         <User className="w-4 h-4 mr-3" />
+                         My Profile
+                       </Link>
+                       <button
+                         onClick={handleLogout}
+                         className="w-full text-left flex items-center px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-slate-700 transition-colors"
+                       >
+                         <LogOut className="w-4 h-4 mr-3" />
+                         Sign Out
+                       </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-medium transition"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-emerald-600 text-white px-6 py-2 rounded-full hover:bg-emerald-700 transition shadow-sm"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>
 
-      {/* Close dropdown when clicking outside */}
-      {showNotificationDropdown && (
+      {/* Close dropdowns when clicking outside */}
+      {(showNotificationDropdown || showProfileDropdown) && (
         <div
           className="fixed inset-0 z-40"
-          onClick={() => setShowNotificationDropdown(false)}
+          onClick={() => {
+            setShowNotificationDropdown(false);
+            setShowProfileDropdown(false);
+          }}
         />
       )}
     </header>

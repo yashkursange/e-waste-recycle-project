@@ -1,40 +1,136 @@
-import React from "react";
-import { Calendar, Clock, MapPin, Truck, User, Phone, CheckCircle, Package, Recycle, Navigation } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Calendar, Clock, MapPin, Truck, User, Phone, CheckCircle, Package, Recycle, Navigation, X } from "lucide-react";
 import LiveMap from "../components/LiveMap";
 
 const PickupTracking = () => {
-  const pickupDetails = {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const pickupId = location.state?.pickupId || null;
+
+  const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+  const [newDate, setNewDate] = useState("");
+
+  const [pickupDetails, setPickupDetails] = useState({
     id: "#ECOR-1024",
     date: "20 Jan 2026",
     time: "10:00 AM – 12:00 PM",
     address: "123 Green Street, Eco City, 400001",
-    driverName: "Rohan Kumar"
+    driverName: "Rohan Kumar",
+    status: "pending"
+  });
+
+  useEffect(() => {
+    if (!pickupId) return;
+    const fetchTracking = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/pickup/${pickupId}/tracking`, {
+          headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setPickupDetails(prev => ({
+            ...prev,
+            id: data.id,
+            date: data.date,
+            time: data.time,
+            address: data.address,
+            status: data.status // will be pending, in progress, completed, or cancelled
+          }));
+        }
+      } catch (err) {
+        console.error("Failed to fetch tracking details", err);
+      }
+    };
+    fetchTracking();
+  }, [pickupId]);
+
+  const handleCancelPickup = async () => {
+    try {
+      // Ensure we use the exact ID we have loaded from tracking
+      const rawId = String(pickupDetails.id || "");
+      const dbId = rawId.replace('#ECO-', '').replace('#ECOR-', '').trim();
+      
+      if (!dbId || dbId === "1024") return alert("No valid pickup backend record found.");
+      if (!window.confirm("Are you sure you want to cancel this pickup?")) return;
+
+      const res = await fetch(`http://localhost:5000/pickup/${dbId}/cancel`, {
+        method: "PUT",
+        headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+      });
+      if (res.ok) {
+        alert("Pickup cancelled successfully.");
+        setPickupDetails(prev => ({ ...prev, status: "cancelled" }));
+      } else {
+        let errorMsg = "Unknown error";
+        try {
+          const errorData = await res.json();
+          errorMsg = errorData.error || errorMsg;
+        } catch(e) {}
+        alert("Failed to cancel pickup: " + errorMsg);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Server or Network error. Make sure your local backend is running and properly restarted.");
+    }
   };
+
+  const handleReschedule = async () => {
+    try {
+      if (!newDate) return alert("Please select a date.");
+      const rawId = String(pickupDetails.id || "");
+      const dbId = rawId.replace('#ECO-', '').replace('#ECOR-', '').trim();
+      if (!dbId || dbId === "1024") return alert("No valid pickup backend record found.");
+      
+      const res = await fetch(`http://localhost:5000/pickup/${dbId}/reschedule`, {
+        method: "PUT",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token") 
+        },
+        body: JSON.stringify({ newDate })
+      });
+      if (res.ok) {
+        alert("Pickup rescheduled successfully!");
+        setPickupDetails(prev => ({ ...prev, date: newDate }));
+        setShowRescheduleModal(false);
+      } else {
+        let errStr = "Unknown error";
+        try { const errData = await res.json(); errStr = errData.error; } catch(e){}
+        alert("Failed to reschedule: " + errStr);
+      }
+    } catch(err) {
+      alert("Server or Network error.");
+    }
+  };
+
+  const dbStatus = pickupDetails.status;
+  const isCancelled = dbStatus === 'cancelled';
 
   const trackingSteps = [
     {
       id: 1,
       label: "Scheduled",
       icon: Calendar,
-      status: "completed"
+      status: isCancelled ? "pending" : "completed"
     },
     {
       id: 2,
       label: "Driver Assigned",
       icon: User,
-      status: "completed"
+      status: isCancelled ? "pending" : (dbStatus === 'completed' || dbStatus === 'in progress' ? 'completed' : 'active')
     },
     {
       id: 3,
       label: "On the Way",
       icon: Truck,
-      status: "active"
+      status: isCancelled ? "pending" : (dbStatus === 'completed' ? 'completed' : (dbStatus === 'in progress' ? 'active' : 'pending'))
     },
     {
       id: 4,
       label: "Picked Up",
       icon: Package,
-      status: "pending"
+      status: isCancelled ? "pending" : (dbStatus === 'completed' ? 'completed' : 'pending')
     },
     {
       id: 5,
@@ -44,7 +140,7 @@ const PickupTracking = () => {
     }
   ];
 
-  const currentStep = trackingSteps.findIndex(step => step.status === 'active');
+  const currentStep = trackingSteps.findIndex(step => step.status === 'active') === -1 ? trackingSteps.length - 1 : trackingSteps.findIndex(step => step.status === 'active');
 
   // Map coordinates (example)
   const userLocation = {
@@ -256,17 +352,30 @@ const PickupTracking = () => {
               </div>
 
               {/* Current Status Alert */}
-              <div 
-                className="mt-8 p-5 rounded-2xl bg-green-50 border border-green-200 flex items-center gap-4"
-              >
-                <div className="p-2 bg-green-100 rounded-xl">
-                  <Truck className="w-6 h-6 text-green-700" style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} />
+              {!isCancelled ? (
+                <div 
+                  className="mt-8 p-5 rounded-2xl bg-green-50 border border-green-200 flex items-center gap-4"
+                >
+                  <div className="p-2 bg-green-100 rounded-xl">
+                    <Truck className="w-6 h-6 text-green-700" style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-green-900">Driver is resolving your pickup.</p>
+                    <p className="text-sm text-green-700 mt-1">Status: {dbStatus}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-semibold text-green-900">Driver is on the way!</p>
-                  <p className="text-sm text-green-700 mt-1">Estimated arrival: 15 minutes</p>
+              ) : (
+                <div 
+                  className="mt-8 p-5 rounded-2xl bg-red-50 border border-red-200 flex items-center gap-4"
+                >
+                  <div className="p-2 bg-red-100 rounded-xl">
+                    <Package className="w-6 h-6 text-red-700" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-red-900">This pickup was cancelled.</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Live Map */}
@@ -286,21 +395,27 @@ const PickupTracking = () => {
               
               <div className="space-y-3">
                 <button 
-                  className="w-full px-6 py-3.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:scale-[1.02]"
+                  onClick={() => alert("Connecting to driver...")}
+                  className="w-full px-6 py-3.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg hover:scale-[1.02] disabled:opacity-50"
+                  disabled={isCancelled}
                 >
                   <Phone className="w-5 h-5" />
                   Contact Driver
                 </button>
 
                 <button 
-                  className="w-full px-6 py-3.5 bg-white dark:bg-slate-900 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-100 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 border-2 border-gray-300 dark:border-slate-600 hover:border-gray-400 dark:hover:border-slate-500 hover:scale-[1.02]"
+                  onClick={() => setShowRescheduleModal(true)}
+                  disabled={isCancelled || dbStatus === 'completed'}
+                  className="w-full px-6 py-3.5 bg-white dark:bg-slate-900 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-100 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 border-2 border-gray-300 dark:border-slate-600 hover:border-gray-400 dark:hover:border-slate-500 hover:scale-[1.02] disabled:opacity-50"
                 >
                   <Calendar className="w-5 h-5" />
                   Reschedule Pickup
                 </button>
 
                 <button 
-                  className="w-full px-6 py-3.5 bg-white dark:bg-slate-900 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-300 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 border-2 border-red-300 dark:border-red-700 hover:border-red-400 hover:scale-[1.02]"
+                  onClick={handleCancelPickup}
+                  disabled={isCancelled || dbStatus === 'completed'}
+                  className="w-full px-6 py-3.5 bg-white dark:bg-slate-900 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-300 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 border-2 border-red-300 dark:border-red-700 hover:border-red-400 hover:scale-[1.02] disabled:opacity-50"
                 >
                   Cancel Pickup
                 </button>
@@ -327,6 +442,48 @@ const PickupTracking = () => {
           </div>
         </div>
       </div>
+
+      {showRescheduleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl w-full max-w-md p-6 border border-slate-200 dark:border-slate-700">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-emerald-600" />
+                Reschedule Pickup
+              </h3>
+              <button onClick={() => setShowRescheduleModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Select New Date</label>
+              <input 
+                type="date"
+                value={newDate}
+                onChange={(e) => setNewDate(e.target.value)}
+                min={new Date().toISOString().split('T')[0]}
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-slate-700 dark:text-white"
+              />
+            </div>
+            
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setShowRescheduleModal(false)}
+                className="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-xl transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleReschedule}
+                className="flex-1 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition-all hover:-translate-y-0.5"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

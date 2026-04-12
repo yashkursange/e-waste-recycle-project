@@ -247,4 +247,13 @@ node server.js
 ```
 npm run dev
 ```
+
+## 🚀 Recent Feature Updates (Current Iteration)
+
+- **Google OAuth Integration**: Added pure native Google sign-in binding, automatically extracting the user's name and profile image, securely injecting it into a dynamic spherical avatar in the Navbar.
+- **Auto-Populating User Details**: Enabled a backend trigger where providing an address on a new E-waste pickup smoothly maps backwards and permanently binds to your core User Profile, saving time on future schedules.
+- **Robust Cancellation Logic**: Built the `PUT /pickup/:id/cancel` proxy and added a sophisticated interceptor on the frontend to parse custom ID labels, allowing users to smoothly abort tracking.
+- **Reschedule Architecture**: Ripped out clunky redirection loops and built a beautiful, native React calendar modal with a corresponding `PUT /pickup/:id/reschedule` backend endpoint to slide pickup dates without re-entering entire forms.
+- **Hot-Reloading Subsystem**: Corrected the backend environment by transitioning exclusively from `node` to `node --watch`, granting continuous robust API updates without external dependencies like nodemon.
+
 Built with ♻️ by EcoRecycle Team

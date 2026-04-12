@@ -1,12 +1,13 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { CheckCircle, Clipboard, Bell } from "lucide-react";
 import Navbar from "../components/Navbar";
 
 const PickupConfirmation = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const pickupDetails = {
+  const pickupDetails = location.state?.pickupDetails || {
     id: "#ECO-10234",
     date: "January 5, 2026",
     timeSlot: "Morning (9 AM - 12 PM)",
@@ -102,13 +103,13 @@ const PickupConfirmation = () => {
 
             <div className="flex flex-col sm:flex-row gap-4">
               <button
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/pickup-tracking", { state: { pickupId: pickupDetails.id.replace('#ECO-', '') } })}
                 className="flex-1 bg-emerald-600 text-white py-4 px-6 rounded-xl font-bold text-lg shadow-sm hover:bg-emerald-700 transition-all"
               >
                 Track Pickup
               </button>
               <button
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/dashboard")}
                 className="flex-1 bg-stone-200 dark:bg-slate-700 text-slate-800 dark:text-slate-100 py-4 px-6 rounded-xl font-bold text-lg hover:bg-stone-300 dark:hover:bg-slate-600 transition-all"
               >
                 Go to Dashboard

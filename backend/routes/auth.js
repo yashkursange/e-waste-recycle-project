@@ -24,22 +24,12 @@ router.post("/register", async (req, res) => {
     const hashed = await bcrypt.hash(password, 10);
 
     db.query(
-      "INSERT INTO users (email, password) VALUES (?, ?)",
-      [email, hashed],
+      "INSERT INTO users (email, password, name) VALUES (?, ?, ?)",
+      [email, hashed, name],
       (err2, result2) => {
         if (err2) return res.status(500).json({ error: err2.message });
-
         const userId = result2.insertId;
-
-        db.query(
-          "INSERT INTO user_profile (user_id, name) VALUES (?, ?)",
-          [userId, name],
-          (err3) => {
-            if (err3) return res.status(500).json({ error: err3.message });
-
-            return res.json({ message: "Registered successfully", userId });
-          }
-        );
+        return res.json({ message: "Registered successfully", userId });
       }
     );
   });
@@ -82,23 +72,11 @@ router.post("/signup", async (req, res) => {
 
       // Insert into users table
       db.query(
-        "INSERT INTO users (email, password) VALUES (?, ?)",
-        [email, hashedPassword],
+        "INSERT INTO users (email, password, name) VALUES (?, ?, ?)",
+        [email, hashedPassword, name],
         (err, userResult) => {
           if (err) return res.status(500).json({ error: "Failed to create user" });
-
-          const userId = userResult.insertId;
-
-          // Insert into profile table (YOU will create this table)
-          db.query(
-            "INSERT INTO user_profile (user_id, name) VALUES (?, ?)",
-            [userId, name],
-            (err2) => {
-              if (err2) return res.status(500).json({ error: "Failed to save profile data" });
-
-              return res.json({ message: "Signup successful" });
-            }
-          );
+          return res.json({ message: "Signup successful" });
         }
       );
     });
@@ -125,7 +103,7 @@ router.post("/google", (req, res) => {
         const payload = JSON.parse(data);
         if (payload.error) return res.status(401).json({ error: "Invalid Google token" });
         
-        const { email, name } = payload;
+        const { email, name, picture } = payload;
         if (!email) return res.status(400).json({ error: "Email not provided by Google" });
         
         db.query("SELECT * FROM users WHERE email = ?", [email], async (err, result) => {
@@ -133,6 +111,9 @@ router.post("/google", (req, res) => {
           
           if (result.length > 0) {
             const user = result[0];
+            // Update the picture and name just in case they changed on Google
+            db.query("UPDATE users SET name = COALESCE(name, ?), picture = ? WHERE id = ?", [name, picture, user.id]);
+
             const jwtToken = jwt.sign({ id: user.id }, "SECRET123", { expiresIn: "1d" });
             return res.json({ message: "Google login successful", token: jwtToken });
           } else {
@@ -140,22 +121,14 @@ router.post("/google", (req, res) => {
             const hashedPassword = await bcrypt.hash(randomPassword, 10);
             
             db.query(
-              "INSERT INTO users (email, password) VALUES (?, ?)",
-              [email, hashedPassword],
+              "INSERT INTO users (email, password, name, picture) VALUES (?, ?, ?, ?)",
+              [email, hashedPassword, name || "Google User", picture || null],
               (err2, userResult) => {
                 if (err2) return res.status(500).json({ error: "Failed to create user" });
                 const userId = userResult.insertId;
                 
-                db.query(
-                  "INSERT INTO user_profile (user_id, name) VALUES (?, ?)",
-                  [userId, name || "Google User"],
-                  (err3) => {
-                    if (err3) return res.status(500).json({ error: "Failed to save profile data" });
-                    
-                    const jwtToken = jwt.sign({ id: userId }, "SECRET123", { expiresIn: "1d" });
-                    return res.json({ message: "Google signup successful", token: jwtToken });
-                  }
-                );
+                const jwtToken = jwt.sign({ id: userId }, "SECRET123", { expiresIn: "1d" });
+                return res.json({ message: "Google signup successful", token: jwtToken });
               }
             );
           }

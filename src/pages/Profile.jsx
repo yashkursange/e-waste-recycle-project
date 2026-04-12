@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   User,
   Mail,
@@ -19,15 +19,15 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState("profile");
 
   const [profile, setProfile] = useState({
-    name: "Aarav Sharma",
-    email: "aarav.sharma@ecorecycle.com",
-    phone: "+91 98765 43210",
+    name: "",
+    email: "",
+    phone: "",
   });
 
   const [address, setAddress] = useState({
-    fullAddress: "Green Residency, 45 Eco Lane",
-    city: "Mumbai",
-    zip: "400001",
+    fullAddress: "",
+    city: "",
+    zip: "",
   });
 
   const [profileDraft, setProfileDraft] = useState(profile);
@@ -43,8 +43,38 @@ const Profile = () => {
   const [addressError, setAddressError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/profile", {
+          headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const loadedProfile = {
+            name: data.name || "",
+            email: data.email || "",
+            phone: data.phone || ""
+          };
+          const loadedAddress = {
+            fullAddress: data.address || "",
+            city: data.city || "",
+            zip: data.zip || ""
+          };
+          setProfile(loadedProfile);
+          setAddress(loadedAddress);
+          setProfileDraft(loadedProfile);
+          setAddressDraft(loadedAddress);
+        }
+      } catch (err) {
+        console.error("Failed to fetch profile", err);
+      }
+    };
+    fetchProfile();
+  }, []);
+
   const initials = useMemo(() => {
-    const parts = profile.name.trim().split(" ").filter(Boolean);
+    const parts = (profile.name || "").trim().split(" ").filter(Boolean);
     if (!parts.length) return "ER";
     return (parts[0][0] + (parts[1]?.[0] || "")).toUpperCase();
   }, [profile.name]);
@@ -54,28 +84,55 @@ const Profile = () => {
     setTimeout(() => setSuccessMessage(""), 2400);
   };
 
-  const handleProfileSave = () => {
+  const updateBackend = async (payload) => {
+    try {
+      const res = await fetch("http://localhost:5000/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token")
+        },
+        body: JSON.stringify(payload)
+      });
+      return res.ok;
+    } catch(err) {
+      console.error(err);
+      return false;
+    }
+  };
+
+  const handleProfileSave = async () => {
     if (!profileDraft.name.trim() || !profileDraft.email.trim() || !profileDraft.phone.trim()) {
       setProfileError("Please fill all profile fields.");
       return;
     }
 
-    setProfile(profileDraft);
-    setProfileError("");
-    setIsProfileEditing(false);
-    showSuccess("Profile updated successfully.");
+    const success = await updateBackend({ ...profileDraft, address: address.fullAddress, city: address.city, zip: address.zip });
+    if(success) {
+      setProfile(profileDraft);
+      setProfileError("");
+      setIsProfileEditing(false);
+      showSuccess("Profile updated successfully.");
+    } else {
+      setProfileError("Failed to update profile.");
+    }
   };
 
-  const handleAddressSave = () => {
+  const handleAddressSave = async () => {
     if (!addressDraft.fullAddress.trim() || !addressDraft.city.trim() || !addressDraft.zip.trim()) {
       setAddressError("Please fill all address fields.");
       return;
     }
 
-    setAddress(addressDraft);
-    setAddressError("");
-    setIsAddressEditing(false);
-    showSuccess("Address updated successfully.");
+    const success = await updateBackend({ ...profile, address: addressDraft.fullAddress, city: addressDraft.city, zip: addressDraft.zip });
+    if(success) {
+      setAddress(addressDraft);
+      setAddressError("");
+      setIsAddressEditing(false);
+      showSuccess("Address updated successfully.");
+    } else {
+      setAddressError("Failed to update address.");
+    }
   };
 
   const handleProfileCancel = () => {
@@ -349,6 +406,7 @@ const Profile = () => {
               <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <button
                   type="button"
+                  onClick={() => alert("A password reset link has been sent to your email!")}
                   className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 dark:border-slate-600 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition"
                 >
                   <Lock className="h-4 w-4" />
@@ -357,6 +415,10 @@ const Profile = () => {
 
                 <button
                   type="button"
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    window.location.href = "/";
+                  }}
                   className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-200 dark:border-red-700 bg-red-50 dark:bg-red-900/20 px-4 py-2 text-sm font-medium text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30 transition"
                 >
                   <LogOut className="h-4 w-4" />

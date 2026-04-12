@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Calendar,
   Package,
@@ -292,113 +292,24 @@ const PickupCard = ({ pickup }) => {
 // MAIN PAGE COMPONENT
 // ============================================
 const PickupHistory = () => {
-  const [activeFilter, setActiveFilter] = useState("all");
+  const [pickupHistory, setPickupHistory] = useState([]);
 
-  // Mock pickup history data
-  const [pickupHistory] = useState([
-    {
-      id: 1001,
-      date: "December 15, 2025",
-      pickupDate: "Dec 15, 2025 - 2:30 PM",
-      scheduleType: "Standard",
-      status: "completed",
-      items: [
-        { name: "Old Laptop", quantity: 1 },
-        { name: "Desktop Monitor", quantity: 1 },
-        { name: "Keyboards", quantity: 2 },
-      ],
-      weight: 8.5,
-      rewardPoints: 425,
-      cancellationReason: null,
-    },
-    {
-      id: 1002,
-      date: "December 10, 2025",
-      pickupDate: "Dec 10, 2025 - 10:00 AM",
-      scheduleType: "Express",
-      status: "completed",
-      items: [
-        { name: "Mobile Phones", quantity: 3 },
-        { name: "Phone Chargers", quantity: 5 },
-        { name: "Headphones", quantity: 2 },
-      ],
-      weight: 2.3,
-      rewardPoints: 190,
-      cancellationReason: null,
-    },
-    {
-      id: 1003,
-      date: "December 5, 2025",
-      pickupDate: "Dec 5, 2025 - 3:00 PM",
-      scheduleType: "Standard",
-      status: "cancelled",
-      items: [
-        { name: "TV Sets", quantity: 1 },
-        { name: "Speakers", quantity: 2 },
-      ],
-      weight: 15.0,
-      rewardPoints: 0,
-      cancellationReason: "Customer requested cancellation",
-    },
-    {
-      id: 1004,
-      date: "November 28, 2025",
-      pickupDate: "Nov 28, 2025 - 1:30 PM",
-      scheduleType: "Standard",
-      status: "completed",
-      items: [
-        { name: "Printers", quantity: 1 },
-        { name: "Scanners", quantity: 1 },
-        { name: "Cables & Accessories", quantity: 3 },
-      ],
-      weight: 12.0,
-      rewardPoints: 600,
-      cancellationReason: null,
-    },
-    {
-      id: 1005,
-      date: "November 20, 2025",
-      pickupDate: "Nov 20, 2025 - 11:00 AM",
-      scheduleType: "Express",
-      status: "cancelled",
-      items: [
-        { name: "Tablets", quantity: 2 },
-        { name: "E-readers", quantity: 1 },
-      ],
-      weight: 1.8,
-      rewardPoints: 0,
-      cancellationReason: "User was unavailable at scheduled time",
-    },
-    {
-      id: 1006,
-      date: "November 12, 2025",
-      pickupDate: "Nov 12, 2025 - 2:00 PM",
-      scheduleType: "Standard",
-      status: "completed",
-      items: [
-        { name: "Computer Towers", quantity: 2 },
-        { name: "Hard Drives", quantity: 3 },
-        { name: "RAM Sticks", quantity: 4 },
-      ],
-      weight: 18.5,
-      rewardPoints: 925,
-      cancellationReason: null,
-    },
-    {
-      id: 1007,
-      date: "November 5, 2025",
-      pickupDate: "Nov 5, 2025 - 10:00 AM",
-      scheduleType: "Standard",
-      status: "completed",
-      items: [
-        { name: "Routers & Modems", quantity: 2 },
-        { name: "Network Switches", quantity: 1 },
-      ],
-      weight: 4.2,
-      rewardPoints: 280,
-      cancellationReason: null,
-    },
-  ]);
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/pickup/my", {
+          headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+        });
+        if(res.ok) {
+          const data = await res.json();
+          setPickupHistory(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch pickup history", err);
+      }
+    };
+    fetchHistory();
+  }, []);
 
   // Filter pickups
   const filteredPickups = useMemo(() => {

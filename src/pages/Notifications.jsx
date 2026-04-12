@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Trash2, CheckCircle2, Clock, Zap, Trophy, AlertCircle, Bell, Package, X } from "lucide-react";
 
 // Filter Tabs Component
@@ -123,62 +123,35 @@ const NotificationCard = ({ notification, onToggleRead, onDelete }) => {
 
 // Main Notifications Page
 const Notifications = () => {
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: "pickup",
-      title: "Pickup Scheduled",
-      message: "Your e-waste pickup has been scheduled for Dec 28, 2025 at 2:00 PM",
-      timestamp: "2 hours ago",
-      isRead: false,
-      icon: Package,
-    },
-    {
-      id: 2,
-      type: "reward",
-      title: "Reward Unlocked",
-      message: "You've earned 250 EcoPoints! Collect more to unlock premium rewards.",
-      timestamp: "5 hours ago",
-      isRead: false,
-      icon: Trophy,
-    },
-    {
-      id: 3,
-      type: "system",
-      title: "System Maintenance",
-      message: "Scheduled maintenance on Dec 25, 2025. Service may be unavailable for 2 hours.",
-      timestamp: "1 day ago",
-      isRead: true,
-      icon: AlertCircle,
-    },
-    {
-      id: 4,
-      type: "pickup",
-      title: "Pickup Completed",
-      message: "Your previous pickup has been completed successfully. 12 kg of e-waste recycled!",
-      timestamp: "3 days ago",
-      isRead: true,
-      icon: CheckCircle2,
-    },
-    {
-      id: 5,
-      type: "reward",
-      title: "Bonus Points Available",
-      message: "Limited time offer! Get 50% extra EcoPoints on your next pickup.",
-      timestamp: "5 days ago",
-      isRead: true,
-      icon: Zap,
-    },
-    {
-      id: 6,
-      type: "system",
-      title: "Welcome to EcoRecycle",
-      message: "Thank you for joining our community. Start recycling and earn rewards!",
-      timestamp: "1 week ago",
-      isRead: true,
-      icon: Bell,
-    },
-  ]);
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/notifications", {
+          headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          // Map backend types to icons
+          const mapped = data.map(n => {
+            let icon = AlertCircle;
+            if(n.type === 'pickup') icon = Package;
+            if(n.type === 'reward') icon = Trophy;
+            if(n.type === 'system') icon = Bell;
+            return {
+              ...n,
+              icon
+            };
+          });
+          setNotifications(mapped);
+        }
+      } catch (err) {
+        console.error("Failed to fetch notifications", err);
+      }
+    };
+    fetchNotifications();
+  }, []);
 
   const [activeFilter, setActiveFilter] = useState("all");
 
@@ -201,24 +174,49 @@ const Notifications = () => {
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-  const toggleRead = (id) => {
-    setNotifications((prev) =>
-      prev.map((notif) =>
-        notif.id === id ? { ...notif, isRead: !notif.isRead } : notif
-      )
-    );
+  const toggleRead = async (id) => {
+    const notif = notifications.find(n => n.id === id);
+    if(!notif) return;
+    try {
+      await fetch("http://localhost:5000/notifications/read/" + id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + localStorage.getItem("token") },
+        body: JSON.stringify({ isRead: !notif.isRead })
+      });
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, isRead: !notif.isRead } : n))
+      );
+    } catch(err) { console.error(err); }
   };
 
-  const deleteNotification = (id) => {
-    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+  const deleteNotification = async (id) => {
+    try {
+      await fetch("http://localhost:5000/notifications/" + id, {
+        method: "DELETE",
+        headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+      });
+      setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+    } catch(err) { console.error(err); }
   };
 
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((notif) => ({ ...notif, isRead: true })));
+  const markAllAsRead = async () => {
+    try {
+      await fetch("http://localhost:5000/notifications/read-all", {
+        method: "PUT",
+        headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+      });
+      setNotifications((prev) => prev.map((notif) => ({ ...notif, isRead: true })));
+    } catch(err) { console.error(err); }
   };
 
-  const clearAll = () => {
-    setNotifications([]);
+  const clearAll = async () => {
+    try {
+      await fetch("http://localhost:5000/notifications/clear-all", {
+        method: "DELETE",
+        headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+      });
+      setNotifications([]);
+    } catch(err) { console.error(err); }
   };
 
   return (

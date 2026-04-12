@@ -59,9 +59,17 @@ const SchedulePickup = () => {
       const data = await res.json();
 
       if (res.ok) {
-        alert("Pickup scheduled successfully ✅");
-        console.log("Pickup Created:", data);
-        navigate("/");
+        // Redirect to pickup confirmation with data
+        navigate("/pickup-confirmation", {
+          state: {
+            pickupDetails: {
+              id: `#ECO-${data.pickupId}`,
+              date: formData.pickupDate,
+              timeSlot: formData.timeSlot,
+              address: formData.address,
+            }
+          }
+        });
       } else {
         alert(data.error || "Failed to schedule pickup");
       }

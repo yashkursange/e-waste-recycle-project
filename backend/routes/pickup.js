@@ -66,7 +66,15 @@ router.post("/create", verifyToken, (req, res) => {
     (err, result) => {
       if (err) return res.status(500).json({ error: err.message });
 
-      res.json({ message: "Pickup scheduled successfully", pickupId: result.insertId });
+      // After successful pickup insertion, update missing profile items!
+      db.query(
+        "UPDATE users SET address = COALESCE(NULLIF(address, ''), ?), city = COALESCE(NULLIF(city, ''), ?), zip = COALESCE(NULLIF(zip, ''), ?), phone = COALESCE(NULLIF(phone, ''), ?) WHERE id = ?",
+        [address, city, postal_code, phone_number, req.userId],
+        (errProfile) => {
+          if (errProfile) console.error("Could not update profile fields:", errProfile.message);
+          res.json({ message: "Pickup scheduled successfully", pickupId: result.insertId });
+        }
+      );
     }
   );
 });
@@ -75,11 +83,77 @@ router.post("/create", verifyToken, (req, res) => {
 // ✅ View My Pickups
 router.get("/my", verifyToken, (req, res) => {
   db.query(
-    "SELECT * FROM pickups WHERE user_id = ? ORDER BY created_at DESC",
+    "SELECT *, DATE_FORMAT(pickup_date, '%b %d, %Y') as formatted_date FROM pickups WHERE user_id = ? ORDER BY created_at DESC",
     [req.userId],
     (err, rows) => {
       if (err) return res.status(500).json({ error: err.message });
-      res.json(rows);
+      
+      const formattedPickups = rows.map(row => ({
+        id: row.id,
+        date: row.formatted_date,
+        pickupDate: `${row.formatted_date} - ${row.time_slot}`,
+        scheduleType: row.time_slot?.includes("Morning") ? "Express" : "Standard",
+        status: row.status.toLowerCase(),
+        items: [
+          { name: row.ewaste_type || "E-Waste", quantity: row.quantity || 1 }
+        ],
+        weight: row.quantity * 2.5, // dummy weight estimate based on qty
+        rewardPoints: (row.quantity || 1) * 50, // 50 points per quantity unit
+        cancellationReason: row.status === 'Cancelled' ? "User cancelled" : null
+      }));
+      res.json(formattedPickups);
+    }
+  );
+});
+
+// ✅ Tracking details
+router.get("/:id/tracking", verifyToken, (req, res) => {
+  db.query(
+    "SELECT * FROM pickups WHERE id = ? AND user_id = ?",
+    [req.params.id, req.userId],
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (rows.length === 0) return res.status(404).json({ error: "Pickup not found" });
+
+      const pickup = rows[0];
+      // Generate some dummy response for tracking
+      res.json({
+        id: `#ECO-${pickup.id}`,
+        date: pickup.pickup_date,
+        time: pickup.time_slot,
+        address: pickup.address,
+        driverName: "Rohan Kumar",
+        status: pickup.status.toLowerCase()
+      });
+    }
+  );
+});
+
+// ✅ Cancel Pickup
+router.put("/:id/cancel", verifyToken, (req, res) => {
+  db.query(
+    "UPDATE pickups SET status = 'Cancelled' WHERE id = ? AND user_id = ?",
+    [req.params.id, req.userId],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (result.affectedRows === 0) return res.status(404).json({ error: "Pickup not found or unauthorized" });
+      res.json({ message: "Pickup cancelled successfully" });
+    }
+  );
+});
+
+// ✅ Reschedule Pickup
+router.put("/:id/reschedule", verifyToken, (req, res) => {
+  const { newDate } = req.body;
+  if(!newDate) return res.status(400).json({ error: "Date is required" });
+  
+  db.query(
+    "UPDATE pickups SET pickup_date = ? WHERE id = ? AND user_id = ?",
+    [newDate, req.params.id, req.userId],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (result.affectedRows === 0) return res.status(404).json({ error: "Pickup not found or unauthorized" });
+      res.json({ message: "Pickup rescheduled successfully" });
     }
   );
 });

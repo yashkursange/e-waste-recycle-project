@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 import {
   Recycle,
   Leaf,
@@ -192,8 +193,25 @@ const QuickActions = ({ actions }) => {
   );
 };
 
-const PickupStatusCard = ({ statuses }) => {
-  const currentStatusIndex = statuses.findIndex((status) => !status.completed);
+const PickupStatusCard = ({ pickup, onTrackClick }) => {
+  if (!pickup) return null;
+
+  // DB statuses: pending, in progress, completed, cancelled
+  const dbStatus = pickup.status.toLowerCase();
+  
+  const statuses = [
+    { id: 1, label: "Scheduled", completed: true },
+    { id: 2, label: "Driver Assigned", completed: dbStatus === 'completed' || dbStatus === 'in progress' },
+    { id: 3, label: "On the Way", completed: dbStatus === 'completed' },
+    { id: 4, label: "Picked Up", completed: dbStatus === 'completed' },
+    { id: 5, label: "Recycled", completed: false }
+  ];
+
+  let currentStatusIndex = 0;
+  if (dbStatus === 'in progress') currentStatusIndex = 2; // On the Way is active
+  else if (dbStatus === 'completed') currentStatusIndex = 4; // All completed except Recycled
+  else if (dbStatus === 'pending') currentStatusIndex = 1; // Driver Assigned is active
+
   const progressPercent = currentStatusIndex <= 0 ? 0 : (currentStatusIndex / (statuses.length - 1)) * 100;
 
   return (
@@ -201,8 +219,13 @@ const PickupStatusCard = ({ statuses }) => {
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-4xl rounded-3xl border border-gray-200 bg-white p-10 shadow-2xl transition-colors duration-300 dark:border-slate-700 dark:bg-slate-800 md:p-14">
           <div className="mb-10 flex items-center justify-between gap-4">
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-white md:text-4xl">Active Pickup Status</h3>
-            <span className="rounded-full bg-eco-yellow-400 px-5 py-3 text-sm font-bold text-gray-900 shadow-md">In Progress</span>
+            <h3 className="text-3xl font-bold text-gray-900 dark:text-white md:text-4xl flex items-center gap-3 cursor-pointer" onClick={onTrackClick}>
+               Active Pickup Status
+               <span className="text-sm font-medium text-eco-green-600 hover:underline">View Tracking &rarr;</span>
+            </h3>
+            <span className="rounded-full bg-eco-yellow-400 px-5 py-3 text-sm font-bold text-gray-900 shadow-md">
+              {dbStatus === 'pending' ? 'Pending' : (dbStatus === 'in progress' ? 'In Progress' : 'Completed')}
+            </span>
           </div>
 
           <div className="relative mb-10">
@@ -210,32 +233,37 @@ const PickupStatusCard = ({ statuses }) => {
             <div className="absolute left-6 top-0 w-1 bg-eco-green-500 transition-all duration-500" style={{ height: `${progressPercent}%` }} />
 
             <div className="space-y-10">
-              {statuses.map((status, index) => (
-                <div key={status.id} className="relative flex items-center">
-                  <div
-                    className={`z-10 flex h-12 w-12 items-center justify-center rounded-full font-bold transition-all duration-300 ${
-                      status.completed
-                        ? "bg-eco-green-500 text-white shadow-lg"
-                        : index === currentStatusIndex
-                          ? "animate-pulse bg-eco-yellow-400 text-gray-900 ring-4 ring-eco-yellow-200 shadow-lg"
-                          : "bg-gray-200 text-gray-400 dark:bg-slate-700 dark:text-slate-400"
-                    }`}
-                  >
-                    {status.completed ? "✓" : index + 1}
-                  </div>
+              {statuses.map((status, index) => {
+                const isActive = index === currentStatusIndex;
+                const isCompleted = index < currentStatusIndex || status.completed;
 
-                  <div className="ml-8">
-                    <h4
-                      className={`text-xl font-bold ${
-                        status.completed || index === currentStatusIndex ? "text-gray-900 dark:text-white" : "text-gray-400 dark:text-slate-400"
+                return (
+                  <div key={status.id} className="relative flex items-center">
+                    <div
+                      className={`z-10 flex h-12 w-12 items-center justify-center rounded-full font-bold transition-all duration-300 ${
+                        isCompleted
+                          ? "bg-eco-green-500 text-white shadow-lg"
+                          : isActive
+                            ? "animate-pulse bg-eco-yellow-400 text-gray-900 ring-4 ring-eco-yellow-200 shadow-lg"
+                            : "bg-gray-200 text-gray-400 dark:bg-slate-700 dark:text-slate-400"
                       }`}
                     >
-                      {status.label}
-                    </h4>
-                    {index === currentStatusIndex ? <p className="mt-2 text-sm text-gray-600 dark:text-slate-300">Currently in progress...</p> : null}
+                      {isCompleted ? "✓" : index + 1}
+                    </div>
+
+                    <div className="ml-8">
+                      <h4
+                        className={`text-xl font-bold ${
+                          isCompleted || isActive ? "text-gray-900 dark:text-white" : "text-gray-400 dark:text-slate-400"
+                        }`}
+                      >
+                        {status.label}
+                      </h4>
+                      {isActive ? <p className="mt-2 text-sm text-gray-600 dark:text-slate-300">Currently in progress...</p> : null}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -245,13 +273,13 @@ const PickupStatusCard = ({ statuses }) => {
               <div>
                 <h5 className="mb-3 text-lg font-bold text-gray-900 dark:text-white">Pickup Details</h5>
                 <p className="mb-2 text-base text-gray-700 dark:text-slate-300">
-                  <strong>Items:</strong> Laptop, Mobile Phone, Tablet
+                  <strong>Items:</strong> {pickup.items?.map(i => `${i.quantity}x ${i.name}`).join(', ')}
                 </p>
                 <p className="mb-2 text-base text-gray-700 dark:text-slate-300">
-                  <strong>Scheduled:</strong> Dec 28, 2025 • 2:00 PM - 4:00 PM
+                  <strong>Scheduled:</strong> {pickup.pickupDate}
                 </p>
                 <p className="flex items-center gap-1 text-base text-gray-700 dark:text-slate-300">
-                  <strong>Agent:</strong> John Doe • <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" /> 4.8 Rating
+                  <strong>Agent:</strong> Not yet assigned
                 </p>
               </div>
             </div>
@@ -349,7 +377,29 @@ const Footer = () => {
 };
 
 const Home = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const isLoggedIn = !!localStorage.getItem("token");
+  const navigate = useNavigate();
+  const [activePickup, setActivePickup] = useState(null);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    const fetchPickups = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/pickup/my", {
+          headers: { Authorization: "Bearer " + localStorage.getItem("token") }
+        });
+        if (res.ok) {
+          const pickups = await res.json();
+          // Find the most recent active/pending pickup
+          const active = pickups.find(p => p.status !== 'cancelled' && p.status !== 'completed');
+          setActivePickup(active || null);
+        }
+      } catch (err) {
+        console.error("Failed to fetch active pickup", err);
+      }
+    };
+    fetchPickups();
+  }, [isLoggedIn]);
 
   const impactStats = [
     { id: 1, title: "E-Waste Recycled", value: "45,280", unit: "kg", icon: "Recycle" },
@@ -358,18 +408,10 @@ const Home = () => {
   ];
 
   const quickActions = [
-    { id: 1, title: "Add E-Waste Item", description: "List items for pickup", icon: "Smartphone", action: () => console.log("Add E-Waste Item") },
-    { id: 2, title: "Schedule Pickup", description: "Book a pickup slot", icon: "Calendar", action: () => console.log("Schedule Pickup") },
-    { id: 3, title: "Track Status", description: "Monitor your pickup", icon: "MapPin", action: () => console.log("Track Status") },
-    { id: 4, title: "Leaderboard", description: "View top recyclers", icon: "Globe", action: () => (window.location.href = "/leaderboard") },
-  ];
-
-  const pickupStatuses = [
-    { id: 1, label: "Requested", completed: true },
-    { id: 2, label: "Assigned", completed: true },
-    { id: 3, label: "On the Way", completed: true },
-    { id: 4, label: "Picked Up", completed: false },
-    { id: 5, label: "Recycled", completed: false },
+    { id: 1, title: "Add E-Waste Item", description: "List items for pickup", icon: "Smartphone", action: () => navigate("/schedule-pickup") },
+    { id: 2, title: "Schedule Pickup", description: "Book a pickup slot", icon: "Calendar", action: () => navigate("/schedule-pickup") },
+    { id: 3, title: "Track Status", description: "Monitor your pickup", icon: "MapPin", action: () => activePickup ? navigate("/pickup-tracking", { state: { pickupId: activePickup.id } }) : navigate("/pickup-history") },
+    { id: 4, title: "Leaderboard", description: "View top recyclers", icon: "Globe", action: () => navigate("/leaderboard") },
   ];
 
   const educationCards = [
@@ -397,11 +439,11 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-100">
-      <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+      <Navbar />
       <HeroSection />
       <QuickActions actions={quickActions} />
       <ImpactSummary stats={impactStats} />
-      {isLoggedIn ? <PickupStatusCard statuses={pickupStatuses} /> : null}
+      {isLoggedIn && activePickup ? <PickupStatusCard pickup={activePickup} onTrackClick={() => navigate('/pickup-tracking', { state: { pickupId: activePickup.id } })} /> : null}
       <EducationSection cards={educationCards} />
       <Footer />
     </div>
