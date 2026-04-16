@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import { Recycle, Globe, Leaf } from "lucide-react";
 
 const AuthSwitcher = () => {
@@ -8,7 +7,6 @@ const AuthSwitcher = () => {
 
   return (
     <>
-      <Navbar />
       <main className="min-h-screen bg-gradient-to-b from-eco-green-50 via-white to-white dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300 flex items-center justify-center p-6">
       <div className="w-full max-w-4xl">
         {isLoginActive ? (

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Trash2, MapPin, Phone, CheckCircle } from "lucide-react";
-import Navbar from "../components/Navbar";
+import { Trash2, MapPin, Phone, CheckCircle, Loader } from "lucide-react";
+import { showSuccess, showError, showLoading, dismissToast } from "../utils/toast";
 
 const SchedulePickup = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     ewasteType: "",
@@ -31,10 +32,20 @@ const SchedulePickup = () => {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Please login first!");
+      showError("Please login first!");
       navigate("/login");
       return;
     }
+
+    // Validate form
+    if (!formData.ewasteType || !formData.quantity || !formData.condition || !formData.address || 
+        !formData.city || !formData.postalCode || !formData.pickupDate || !formData.timeSlot || !formData.phoneNumber) {
+      showError("Please fill all fields");
+      return;
+    }
+
+    setLoading(true);
+    const toastId = showLoading("Scheduling your pickup...");
 
     try {
       const res = await fetch("http://localhost:5000/pickup/create", {
@@ -57,25 +68,32 @@ const SchedulePickup = () => {
       });
 
       const data = await res.json();
+      dismissToast(toastId);
 
       if (res.ok) {
+        showSuccess("✓ Pickup scheduled successfully!");
         // Redirect to pickup confirmation with data
-        navigate("/pickup-confirmation", {
-          state: {
-            pickupDetails: {
-              id: `#ECO-${data.pickupId}`,
-              date: formData.pickupDate,
-              timeSlot: formData.timeSlot,
-              address: formData.address,
+        setTimeout(() => {
+          navigate("/pickup-confirmation", {
+            state: {
+              pickupDetails: {
+                id: `#ECO-${data.pickupId}`,
+                date: formData.pickupDate,
+                timeSlot: formData.timeSlot,
+                address: formData.address,
+              }
             }
-          }
-        });
+          });
+        }, 500);
       } else {
-        alert(data.error || "Failed to schedule pickup");
+        showError(data.error || "Failed to schedule pickup");
       }
     } catch (err) {
       console.log(err);
-      alert("Server not reachable");
+      dismissToast(toastId);
+      showError("Server not reachable. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -83,40 +101,38 @@ const SchedulePickup = () => {
 
   return (
     <>
-      <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-stone-100 via-stone-50 to-slate-100 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 py-8 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-stone-50 dark:bg-slate-800 rounded-2xl shadow-sm p-6 sm:p-8 lg:p-10 border border-stone-200 dark:border-slate-700 transition-colors duration-300 dark:[&_h1]:text-white dark:[&_h2]:text-white dark:[&_label]:text-slate-200 dark:[&_p]:text-slate-300 dark:[&_input]:bg-slate-900 dark:[&_input]:text-white dark:[&_input]:border-slate-700 dark:[&_textarea]:bg-slate-900 dark:[&_textarea]:text-white dark:[&_textarea]:border-slate-700 dark:[&_select]:bg-slate-900 dark:[&_select]:text-white dark:[&_select]:border-slate-700">
-            <div className="mb-8 text-center">
-              <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 mb-3">
-                Schedule E-Waste Pickup
-              </h1>
-              <p className="text-slate-600 text-lg">
-                We'll collect your old electronics from your doorstep
-              </p>
-            </div>
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-stone-50 dark:bg-slate-800 rounded-2xl shadow-sm p-6 sm:p-8 lg:p-10 border border-stone-200 dark:border-slate-700 transition-colors duration-300 dark:[&_h1]:text-white dark:[&_h2]:text-white dark:[&_label]:text-slate-200 dark:[&_p]:text-slate-300 dark:[&_input]:bg-slate-900 dark:[&_input]:text-white dark:[&_input]:border-slate-700 dark:[&_textarea]:bg-slate-900 dark:[&_textarea]:text-white dark:[&_textarea]:border-slate-700 dark:[&_select]:bg-slate-900 dark:[&_select]:text-white dark:[&_select]:border-slate-700">
+          <div className="mb-8 text-center">
+            <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 mb-3">
+              Schedule E-Waste Pickup
+            </h1>
+            <p className="text-slate-600 text-lg">
+              We'll collect your old electronics from your doorstep
+            </p>
+          </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-6 space-y-5 border border-emerald-100 dark:border-emerald-800">
-                <h2 className="text-lg font-bold text-emerald-800 flex items-center gap-3">
-                  <Trash2 className="w-5 h-5 text-emerald-700" />
-                  E-Waste Details
-                </h2>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-6 space-y-5 border border-emerald-100 dark:border-emerald-800">
+              <h2 className="text-lg font-bold text-emerald-800 flex items-center gap-3">
+                <Trash2 className="w-5 h-5 text-emerald-700" />
+                E-Waste Details
+              </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div>
-                    <label htmlFor="ewasteType" className="block text-sm font-semibold text-slate-700 mb-2">
-                      E-waste Type <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      id="ewasteType"
-                      name="ewasteType"
-                      value={formData.ewasteType}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-2.5 bg-white border border-stone-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-slate-700"
-                    >
-                      <option value="">Select e-waste type</option>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label htmlFor="ewasteType" className="block text-sm font-semibold text-slate-700 mb-2">
+                    E-waste Type <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="ewasteType"
+                    name="ewasteType"
+                    value={formData.ewasteType}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2.5 bg-white border border-stone-300 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-transparent outline-none text-slate-700"
+                  >
+                    <option value="">Select e-waste type</option>
                       <option value="Mobile Phone">Mobile Phone</option>
                       <option value="Laptop">Laptop</option>
                       <option value="Desktop">Desktop</option>
@@ -318,13 +334,20 @@ const SchedulePickup = () => {
 
                 <button
                   type="submit"
-                  className="w-full bg-emerald-600 text-white py-4 px-6 rounded-xl font-bold text-lg shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  disabled={loading}
+                  className="w-full bg-emerald-600 text-white py-4 px-6 rounded-xl font-bold text-lg shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-400 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-emerald-600 transition-all duration-200 flex items-center justify-center gap-2"
                 >
-                  Schedule Pickup
+                  {loading ? (
+                    <>
+                      <Loader className="w-5 h-5 animate-spin" />
+                      <span>Scheduling...</span>
+                    </>
+                  ) : (
+                    "Schedule Pickup"
+                  )}
                 </button>
               </div>
             </form>
-          </div>
         </div>
       </div>
     </>

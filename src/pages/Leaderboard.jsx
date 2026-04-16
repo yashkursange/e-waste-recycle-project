@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
 import { Trophy, Medal, Award, Recycle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -56,8 +55,6 @@ const Leaderboard = () => {
 
   return (
     <div className="min-h-screen bg-emerald-50/30 dark:bg-slate-900 transition-colors duration-300">
-      <Navbar />
-
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-extrabold text-slate-800 dark:text-white mb-4 tracking-tight">

@@ -12,6 +12,8 @@ import {
   Zap,
   X,
 } from "lucide-react";
+import { PickupHistorySkeleton } from "../components/SkeletonLoader";
+import { showSuccess, showError } from "../utils/toast";
 
 // ============================================
 // STATS CARD COMPONENT
@@ -293,6 +295,9 @@ const PickupCard = ({ pickup }) => {
 // ============================================
 const PickupHistory = () => {
   const [pickupHistory, setPickupHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [activeFilter, setActiveFilter] = useState("all");
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -303,9 +308,14 @@ const PickupHistory = () => {
         if(res.ok) {
           const data = await res.json();
           setPickupHistory(data);
+        } else {
+          throw new Error("Failed to fetch history");
         }
       } catch (err) {
         console.error("Failed to fetch pickup history", err);
+        setError("Failed to load pickup history");
+      } finally {
+        setLoading(false);
       }
     };
     fetchHistory();
@@ -333,108 +343,127 @@ const PickupHistory = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-50 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 transition-colors duration-300">
-      {/* Main Container - Spacious & Full Width */}
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-16">
-        {/* Page Header */}
-        <div className="mb-10">
-          <div className="flex items-center gap-4 mb-3">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg">
-              <Package className="h-8 w-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold text-slate-900 dark:text-white">
-                Pickup History
-              </h1>
-              <p className="mt-2 text-base text-slate-600 dark:text-slate-400">
-                Track all your e-waste pickups and recycling achievements
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Statistics Cards - Grid with Hover Effects */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <StatsCard
-            icon={Package}
-            label="Total Pickups"
-            value={stats.total}
-            gradient="bg-blue-500"
-          />
-          <StatsCard
-            icon={CheckCircle2}
-            label="Completed"
-            value={stats.completed}
-            gradient="bg-emerald-500"
-          />
-          <StatsCard
-            icon={Weight}
-            label="Total Weight"
-            value={stats.totalWeight.toFixed(1)}
-            unit="kg"
-            gradient="bg-purple-500"
-          />
-          <StatsCard
-            icon={Award}
-            label="Points Earned"
-            value={stats.totalPoints}
-            gradient="bg-amber-500"
-          />
-        </div>
-
-        {/* Filter Bar */}
-        <FilterBar
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
-          stats={stats}
-        />
-
-        {/* Pickups List or Empty State */}
-        <div className="space-y-4">
-          {filteredPickups.length > 0 ? (
-            <>
-              {filteredPickups.map((pickup) => (
-                <PickupCard key={pickup.id} pickup={pickup} />
-              ))}
-            </>
-          ) : (
-            <div className="rounded-3xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-gradient-to-br from-white/50 to-slate-50/50 dark:from-slate-800/50 dark:to-slate-900/50 px-8 py-16 text-center backdrop-blur-sm transition-all duration-300">
-              <div className="mb-4 flex justify-center">
-                <div className="rounded-2xl bg-slate-100 dark:bg-slate-800 p-4">
-                  <Package className="h-12 w-12 text-slate-400 dark:text-slate-600" />
-                </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-slate-50 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900 transition-colors duration-300 animate-in fade-in">
+      {loading && <PickupHistorySkeleton />}
+      
+      {!loading && (
+        <>
+          {error && (
+            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-16">
+              <div className="rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 p-6 text-center">
+                <p className="text-red-600 dark:text-red-400 font-semibold">{error}</p>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                No pickups found
-              </h3>
-              <p className="mt-2 text-slate-600 dark:text-slate-400 max-w-md mx-auto">
-                {activeFilter !== "all"
-                  ? `You don't have any ${activeFilter} pickups yet. Try a different filter!`
-                  : "You haven't scheduled any pickups yet. Start your recycling journey today!"}
-              </p>
             </div>
           )}
-        </div>
-
-        {/* Footer Info Card */}
-        {pickupHistory.length > 0 && (
-          <div className="mt-12 rounded-2xl bg-gradient-to-r from-emerald-50 to-emerald-50/50 dark:from-emerald-900/20 dark:to-emerald-900/10 border border-emerald-200 dark:border-emerald-700/50 p-8 shadow-sm">
-            <div className="flex items-start gap-3">
-              <Zap className="h-6 w-6 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <h4 className="font-bold text-emerald-900 dark:text-emerald-200">
-                  💡 Your Impact
-                </h4>
-                <p className="text-sm text-emerald-800 dark:text-emerald-300 mt-1">
-                  You've recycled <strong>{stats.totalWeight.toFixed(1)} kg</strong> of e-waste and earned{" "}
-                  <strong>{stats.totalPoints} points</strong>! Keep it up to unlock exclusive rewards and
-                  make a difference for the planet.
-                </p>
+          
+          {!error && (
+            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-16">
+              {/* Page Header */}
+              <div className="mb-10 animate-in slide-in-from-left duration-500">
+                <div className="flex items-center gap-4 mb-3">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg hover:scale-110 transition-transform duration-300">
+                    <Package className="h-8 w-8 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-4xl font-bold text-slate-900 dark:text-white">
+                      Pickup History
+                    </h1>
+                    <p className="mt-2 text-base text-slate-600 dark:text-slate-400">
+                      Track all your e-waste pickups and recycling achievements
+                    </p>
+                  </div>
+                </div>
               </div>
+
+              {/* Statistics Cards - Grid with Hover Effects */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+                <StatsCard
+                  icon={Package}
+                  label="Total Pickups"
+                  value={stats.total}
+                  gradient="bg-blue-500"
+                />
+                <StatsCard
+                  icon={CheckCircle2}
+                  label="Completed"
+                  value={stats.completed}
+                  gradient="bg-emerald-500"
+                />
+                <StatsCard
+                  icon={Weight}
+                  label="Total Weight"
+                  value={stats.totalWeight.toFixed(1)}
+                  unit="kg"
+                  gradient="bg-purple-500"
+                />
+                <StatsCard
+                  icon={Award}
+                  label="Points Earned"
+                  value={stats.totalPoints}
+                  gradient="bg-amber-500"
+                />
+              </div>
+
+              {/* Filter Bar */}
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
+                <FilterBar
+                  activeFilter={activeFilter}
+                  onFilterChange={setActiveFilter}
+                  stats={stats}
+                />
+              </div>
+
+              {/* Pickups List or Empty State */}
+              <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
+                {filteredPickups.length > 0 ? (
+                  <>
+                    {filteredPickups.map((pickup, index) => (
+                      <div key={pickup.id} className="animate-in fade-in slide-in-from-bottom-4 duration-500" style={{animationDelay: `${index * 50}ms`}}>
+                        <PickupCard pickup={pickup} />
+                      </div>
+                    ))}
+                  </>
+                ) : (
+                  <div className="rounded-3xl border-2 border-dashed border-slate-300 dark:border-slate-600 bg-gradient-to-br from-white/50 to-slate-50/50 dark:from-slate-800/50 dark:to-slate-900/50 px-8 py-16 text-center backdrop-blur-sm transition-all duration-300 hover:shadow-lg">
+                    <div className="mb-4 flex justify-center">
+                      <div className="rounded-2xl bg-slate-100 dark:bg-slate-800 p-4">
+                        <Package className="h-12 w-12 text-slate-400 dark:text-slate-600" />
+                      </div>
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                      No pickups found
+                    </h3>
+                    <p className="mt-2 text-slate-600 dark:text-slate-400 max-w-md mx-auto">
+                      {activeFilter !== "all"
+                        ? `You don't have any ${activeFilter} pickups yet. Try a different filter!`
+                        : "You haven't scheduled any pickups yet. Start your recycling journey today!"}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Footer Info Card */}
+              {pickupHistory.length > 0 && (
+                <div className="mt-12 rounded-2xl bg-gradient-to-r from-emerald-50 to-emerald-50/50 dark:from-emerald-900/20 dark:to-emerald-900/10 border border-emerald-200 dark:border-emerald-700/50 p-8 shadow-sm hover:shadow-lg transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-500">
+                  <div className="flex items-start gap-3">
+                    <Zap className="h-6 w-6 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="font-bold text-emerald-900 dark:text-emerald-200">
+                        💡 Your Impact
+                      </h4>
+                      <p className="text-sm text-emerald-800 dark:text-emerald-300 mt-1">
+                        You've recycled <strong>{stats.totalWeight.toFixed(1)} kg</strong> of e-waste and earned{" "}
+                        <strong>{stats.totalPoints} points</strong>! Keep it up to unlock exclusive rewards and
+                        make a difference for the planet.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

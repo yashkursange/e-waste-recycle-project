@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import { Recycle, Globe } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login, isAuthenticated } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -22,9 +30,9 @@ const Login = () => {
         });
         const data = await res.json();
         setLoading(false);
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-          navigate("/");
+        if (data.token && data.user) {
+          login(data.user, data.token);
+          navigate("/dashboard");
         } else {
           alert(data.error || "Google login failed");
         }
@@ -87,9 +95,9 @@ const Login = () => {
 
       setLoading(false);
 
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-        navigate("/");  // redirect to homepage/dashboard
+      if (data.token && data.user) {
+        login(data.user, data.token);
+        navigate("/dashboard");
       } else {
         alert(data.error || "Login failed");
       }
@@ -102,9 +110,7 @@ const Login = () => {
 
 
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen bg-gradient-to-b from-eco-green-50 via-white to-white dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300 flex items-center justify-center p-6">
+    <main className="min-h-screen bg-gradient-to-b from-eco-green-50 via-white to-white dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300 flex items-center justify-center p-6">
         <div className="w-full max-w-4xl">
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row border border-transparent dark:border-slate-700 transition-colors duration-300 dark:[&_h1]:text-white dark:[&_h2]:text-white dark:[&_h3]:text-white dark:[&_p]:text-slate-300 dark:[&_label]:text-slate-200 dark:[&_input]:bg-slate-800 dark:[&_input]:text-white dark:[&_input]:border-slate-700 dark:[&_input]:placeholder:text-slate-400">
             <div className="w-full md:w-1/2 p-8 md:p-12">
@@ -285,8 +291,7 @@ const Login = () => {
           </div>
         </div>
       </main>
-    </>
-  );
+    );
 };
 
 export default Login;

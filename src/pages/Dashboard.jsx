@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Calendar, Package, Gift, MapPin, TrendingUp, Leaf, Award, Truck, CheckCircle, Plus } from "lucide-react";
 import useTheme from "../hooks/useTheme";
+import { DashboardSkeleton } from "../components/SkeletonLoader";
+import { showSuccess, showError } from "../utils/toast";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const { isDark } = useTheme();
   const [dashboardData, setDashboardData] = useState({
     upcomingPickup: null,
@@ -45,6 +49,25 @@ const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
+  const handleQuickAction = (actionTitle) => {
+    switch(actionTitle) {
+      case "Schedule Pickup":
+        navigate("/schedule-pickup");
+        break;
+      case "View Rewards":
+        navigate("/profile");
+        break;
+      case "Track Pickup":
+        navigate("/pickup-tracking");
+        break;
+      case "Add More E-Waste":
+        navigate("/schedule-pickup");
+        break;
+      default:
+        break;
+    }
+  };
+
   const quickActions = [
     { title: "Schedule Pickup", icon: Calendar },
     { title: "View Rewards", icon: Gift },
@@ -66,17 +89,17 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center p-8 bg-[#F1F8F4] dark:bg-slate-900 transition-colors duration-300"><div className="text-xl font-bold text-[#2E7D32]">Loading dashboard...</div></div>;
+    return <DashboardSkeleton />;
   }
 
   if (error) {
-    return <div className="min-h-screen flex items-center justify-center p-8 bg-[#F1F8F4] dark:bg-slate-900 transition-colors duration-300"><div className="text-xl font-bold text-red-600 bg-red-50 dark:bg-red-900/20 p-6 rounded-2xl">{error}</div></div>;
+    return <div className="min-h-screen flex items-center justify-center p-8 bg-[#F1F8F4] dark:bg-slate-900 transition-colors duration-300 animate-in fade-in"><div className="text-xl font-bold text-red-600 bg-red-50 dark:bg-red-900/20 p-6 rounded-2xl">{error}</div></div>;
   }
 
   const { upcomingPickup, impactStats, recentActivity } = dashboardData;
 
   return (
-    <div className="min-h-screen transition-colors duration-300" style={{ backgroundColor: isDark ? '#0f172a' : '#F1F8F4' }}>
+    <div className="min-h-screen transition-colors duration-300 animate-in fade-in" style={{ backgroundColor: isDark ? '#0f172a' : '#F1F8F4' }}>
       {/* Header Banner */}
       <div
         className="mb-10"
@@ -88,7 +111,7 @@ const Dashboard = () => {
         }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="flex items-center gap-3 mb-3">
+          <div className="flex items-center gap-3 mb-3 animate-in slide-in-from-left duration-500">
             <Leaf className="w-10 h-10" style={{ color: '#2E7D32' }} />
             <h1 className="text-5xl font-bold" style={{ color: '#2E7D32' }}>Welcome Back</h1>
           </div>
@@ -99,11 +122,11 @@ const Dashboard = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
 
         {/* Upcoming Pickup Card */}
-        <div className="mb-10">
+        <div className="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-5">Upcoming Pickup</h2>
           {upcomingPickup ? (
             <div
-              className="rounded-2xl shadow-lg border-l-8 p-8 relative"
+              className="rounded-2xl shadow-lg border-l-8 p-8 relative hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5"
               style={{
                 backgroundColor: isDark ? '#1f2937' : '#fafdfb',
                 borderLeftColor: '#2E7D32',
@@ -153,7 +176,8 @@ const Dashboard = () => {
               </div>
 
               <button
-                className="px-8 py-3 text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-xl flex items-center gap-2"
+                onClick={() => navigate("/pickup-tracking")}
+                className="px-8 py-3 text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-xl flex items-center gap-2 active:scale-95 transform hover:-translate-y-0.5"
                 style={{
                   backgroundColor: '#2E7D32',
                   boxShadow: '0 4px 12px rgba(46, 125, 50, 0.2)'
@@ -164,14 +188,15 @@ const Dashboard = () => {
               </button>
             </div>
           ) : (
-            <div className="rounded-2xl shadow-lg p-8 text-center" style={{ backgroundColor: isDark ? '#1f2937' : '#fafdfb', border: isDark ? '1px solid rgba(71, 85, 105, 0.8)' : '1px solid rgba(46, 125, 50, 0.1)' }}>
+            <div className="rounded-2xl shadow-lg p-8 text-center hover:shadow-xl transition-all duration-300" style={{ backgroundColor: isDark ? '#1f2937' : '#fafdfb', border: isDark ? '1px solid rgba(71, 85, 105, 0.8)' : '1px solid rgba(46, 125, 50, 0.1)' }}>
               <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-[#E2EFE6]">
                 <Truck className="w-8 h-8 text-[#2E7D32]" />
               </div>
               <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">No Upcoming Pickups</h3>
               <p className="text-gray-500 dark:text-slate-300 mb-6">You don't have any e-waste pickups scheduled at the moment.</p>
               <button
-                className="px-6 py-2 text-white font-semibold rounded-lg shadow-md hover:bg-[#236025] transition"
+                onClick={() => navigate("/schedule-pickup")}
+                className="px-6 py-2 text-white font-semibold rounded-lg shadow-md hover:bg-[#236025] transition-all duration-200 active:scale-95 transform hover:-translate-y-0.5"
                 style={{ backgroundColor: '#2E7D32' }}
               >
                 Schedule Now
@@ -181,7 +206,7 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions Grid */}
-        <div className="mb-10">
+        <div className="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-200">
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-5">Quick Actions</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
             {quickActions.map((action, index) => {
@@ -189,7 +214,8 @@ const Dashboard = () => {
               return (
                 <button
                   key={index}
-                  className="rounded-2xl p-7 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                  onClick={() => handleQuickAction(action.title)}
+                  className="rounded-2xl p-7 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 active:scale-95 group"
                   style={{
                     backgroundColor: isDark ? '#1f2937' : '#fafdfb',
                     border: isDark ? '1px solid rgba(71, 85, 105, 0.8)' : '1px solid rgba(46, 125, 50, 0.1)'
@@ -204,7 +230,7 @@ const Dashboard = () => {
                   }}
                 >
                   <div className="flex flex-col items-center text-center">
-                    <div className="p-4 rounded-xl mb-4" style={{ backgroundColor: '#E2EFE6' }}>
+                    <div className="p-4 rounded-xl mb-4 group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: '#E2EFE6' }}>
                       <Icon className="w-8 h-8" style={{ color: '#2E7D32' }} />
                     </div>
                     <p className="font-semibold text-gray-800 dark:text-white">{action.title}</p>
@@ -216,7 +242,7 @@ const Dashboard = () => {
         </div>
 
         {/* Impact Summary */}
-        <div className="mb-10">
+        <div className="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-300">
           <div className="flex items-center gap-2 mb-5">
             <TrendingUp className="w-7 h-7" style={{ color: '#2E7D32' }} />
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Your Environmental Impact</h2>
@@ -231,13 +257,13 @@ const Dashboard = () => {
               return (
                 <div
                   key={index}
-                  className="rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300"
+                  className="rounded-2xl shadow-lg p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 group"
                   style={{
                     backgroundColor: isDark ? '#1f2937' : '#E2EFE6',
                     border: isDark ? '1px solid rgba(71, 85, 105, 0.8)' : '1px solid rgba(46, 125, 50, 0.15)'
                   }}
                 >
-                  <Icon className="w-12 h-12 mb-4" style={{ color: '#2E7D32' }} />
+                  <Icon className="w-12 h-12 mb-4 group-hover:scale-110 transition-transform duration-300" style={{ color: '#2E7D32' }} />
                   <div className="mb-2">
                     <span className="text-5xl font-bold" style={{ color: '#2E7D32' }}>{stat.value}</span>
                     <span className="text-2xl font-semibold text-gray-600 dark:text-slate-300 ml-1">{stat.unit}</span>
@@ -251,7 +277,7 @@ const Dashboard = () => {
 
         {/* Recent Activity Timeline */}
         <div
-          className="rounded-2xl shadow-lg p-9"
+          className="rounded-2xl shadow-lg p-9 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-400"
           style={{
             backgroundColor: isDark ? '#1f2937' : '#fafdfb',
             border: isDark ? '1px solid rgba(71, 85, 105, 0.8)' : '1px solid rgba(46, 125, 50, 0.1)'
@@ -267,11 +293,11 @@ const Dashboard = () => {
                 recentActivity.map((activity, index) => {
                   const Icon = getIcon(activity.iconName);
                   return (
-                    <div key={index} className="flex items-start gap-6 relative">
+                    <div key={index} className="flex items-start gap-6 relative animate-in fade-in slide-in-from-left duration-500" style={{animationDelay: `${index * 100}ms`}}>
                       {/* Timeline dot */}
                       <div className="relative z-10 flex-shrink-0">
                         <div
-                          className="w-8 h-8 rounded-full flex items-center justify-center border-4 shadow-lg"
+                          className="w-8 h-8 rounded-full flex items-center justify-center border-4 shadow-lg transition-all duration-300 hover:scale-125"
                           style={{
                             backgroundColor: '#2E7D32',
                             borderColor: isDark ? '#1f2937' : '#fafdfb'
@@ -282,7 +308,7 @@ const Dashboard = () => {
                       </div>
 
                       {/* Content */}
-                      <div className="flex-1 pt-0.5">
+                      <div className="flex-1 pt-0.5 hover:bg-slate-100/50 dark:hover:bg-slate-700/50 p-3 rounded-lg transition-colors duration-200">
                         <div className="flex items-start justify-between gap-4 flex-wrap">
                           <div className="flex items-center gap-3">
                             <Icon className="w-5 h-5" style={{ color: '#2E7D32' }} />

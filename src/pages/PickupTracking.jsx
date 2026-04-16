@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Calendar, Clock, MapPin, Truck, User, Phone, CheckCircle, Package, Recycle, Navigation, X } from "lucide-react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Calendar, Clock, MapPin, Truck, User, Phone, CheckCircle, Package, Recycle, Navigation, X, Loader } from "lucide-react";
+import { showSuccess, showError, dismissToast, showLoading, updateToast } from "../utils/toast";
 import LiveMap from "../components/LiveMap";
 
 const PickupTracking = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const pickupId = location.state?.pickupId || null;
+  const { id: urlId } = useParams();
+  
+  const pickupIdFromState = location.state?.pickupId || null;
+  const pickupId = urlId || pickupIdFromState || null;
 
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
   const [newDate, setNewDate] = useState("");
+  const [loading, setLoading] = useState(!!pickupId);
+  const [cancelling, setCancelling] = useState(false);
+  const [rescheduling, setRescheduling] = useState(false);
 
   const [pickupDetails, setPickupDetails] = useState({
     id: "#ECOR-1024",
@@ -21,7 +28,11 @@ const PickupTracking = () => {
   });
 
   useEffect(() => {
-    if (!pickupId) return;
+    if (!pickupId) {
+      setLoading(false);
+      return;
+    }
+    
     const fetchTracking = async () => {
       try {
         const res = await fetch(`http://localhost:5000/pickup/${pickupId}/tracking`, {
@@ -40,6 +51,9 @@ const PickupTracking = () => {
         }
       } catch (err) {
         console.error("Failed to fetch tracking details", err);
+        showError("Failed to load tracking details");
+      } finally {
+        setLoading(false);
       }
     };
     fetchTracking();
@@ -51,15 +65,27 @@ const PickupTracking = () => {
       const rawId = String(pickupDetails.id || "");
       const dbId = rawId.replace('#ECO-', '').replace('#ECOR-', '').trim();
       
-      if (!dbId || dbId === "1024") return alert("No valid pickup backend record found.");
-      if (!window.confirm("Are you sure you want to cancel this pickup?")) return;
+      if (!dbId || dbId === "1024") {
+        showError("No valid pickup record found.");
+        return;
+      }
+      
+      if (!window.confirm("Are you sure you want to cancel this pickup? This action cannot be undone.")) {
+        return;
+      }
+
+      setCancelling(true);
+      const toastId = showLoading("Cancelling pickup...");
 
       const res = await fetch(`http://localhost:5000/pickup/${dbId}/cancel`, {
         method: "PUT",
         headers: { Authorization: "Bearer " + localStorage.getItem("token") }
       });
+      
+      dismissToast(toastId);
+      
       if (res.ok) {
-        alert("Pickup cancelled successfully.");
+        showSuccess("✓ Pickup cancelled successfully.");
         setPickupDetails(prev => ({ ...prev, status: "cancelled" }));
       } else {
         let errorMsg = "Unknown error";
@@ -67,21 +93,33 @@ const PickupTracking = () => {
           const errorData = await res.json();
           errorMsg = errorData.error || errorMsg;
         } catch(e) {}
-        alert("Failed to cancel pickup: " + errorMsg);
+        showError("Failed to cancel pickup: " + errorMsg);
       }
     } catch (err) {
       console.error(err);
-      alert("Server or Network error. Make sure your local backend is running and properly restarted.");
+      showError("Server or network error. Please try again.");
+    } finally {
+      setCancelling(false);
     }
   };
 
   const handleReschedule = async () => {
     try {
-      if (!newDate) return alert("Please select a date.");
+      if (!newDate) {
+        showError("Please select a date.");
+        return;
+      }
+      
       const rawId = String(pickupDetails.id || "");
       const dbId = rawId.replace('#ECO-', '').replace('#ECOR-', '').trim();
-      if (!dbId || dbId === "1024") return alert("No valid pickup backend record found.");
+      if (!dbId || dbId === "1024") {
+        showError("No valid pickup record found.");
+        return;
+      }
       
+      setRescheduling(true);
+      const toastId = showLoading("Rescheduling pickup...");
+
       const res = await fetch(`http://localhost:5000/pickup/${dbId}/reschedule`, {
         method: "PUT",
         headers: { 
@@ -90,17 +128,25 @@ const PickupTracking = () => {
         },
         body: JSON.stringify({ newDate })
       });
+      
+      dismissToast(toastId);
+      
       if (res.ok) {
-        alert("Pickup rescheduled successfully!");
+        showSuccess("✓ Pickup rescheduled successfully!");
         setPickupDetails(prev => ({ ...prev, date: newDate }));
         setShowRescheduleModal(false);
       } else {
         let errStr = "Unknown error";
-        try { const errData = await res.json(); errStr = errData.error; } catch(e){}
-        alert("Failed to reschedule: " + errStr);
+        try { 
+          const errData = await res.json(); 
+          errStr = errData.error; 
+        } catch(e){}
+        showError("Failed to reschedule: " + errStr);
       }
     } catch(err) {
-      alert("Server or Network error.");
+      showError("Server or network error. Please try again.");
+    } finally {
+      setRescheduling(false);
     }
   };
 

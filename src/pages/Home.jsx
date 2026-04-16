@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import {
   Recycle,
   Leaf,
@@ -439,7 +438,6 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-100">
-      <Navbar />
       <HeroSection />
       <QuickActions actions={quickActions} />
       <ImpactSummary stats={impactStats} />
