@@ -133,18 +133,7 @@ const PrivateLayout = ({ children }) => {
                 to="/leaderboard"
                 className="text-slate-600 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 font-medium transition"
               >
-                Rewards
-              </Link>
-              <Link
-                to="/notifications"
-                className="text-slate-600 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 font-medium transition flex items-center gap-1"
-              >
-                Notifications
-                {unreadCount > 0 && (
-                  <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-red-500 text-white text-xs font-semibold">
-                    {unreadCount > 9 ? '9+' : unreadCount}
-                  </span>
-                )}
+                Leaderboard
               </Link>
             </div>
 
@@ -360,7 +349,7 @@ const PrivateLayout = ({ children }) => {
                 className="block text-slate-600 dark:text-slate-300 hover:text-emerald-700 py-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Rewards
+                Leaderboard
               </Link>
               <Link
                 to="/notifications"

@@ -52,6 +52,7 @@ function App() {
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/auth" element={<AuthSwitcher />} />
+              <Route path="/onboarding" element={<Onboarding />} />
               {/* Redirect other routes to dashboard */}
               <Route path="/" element={<Navigate to="/dashboard" />} />
               <Route path="*" element={<Navigate to="/dashboard" />} />

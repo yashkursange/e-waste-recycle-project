@@ -29,7 +29,12 @@ router.post("/register", async (req, res) => {
       (err2, result2) => {
         if (err2) return res.status(500).json({ error: err2.message });
         const userId = result2.insertId;
-        return res.json({ message: "Registered successfully", userId });
+        const token = jwt.sign({ id: userId }, "SECRET123", { expiresIn: "1d" });
+        return res.json({ 
+          message: "Registered successfully", 
+          token, 
+          user: { id: userId, email, name } 
+        });
       }
     );
   });
@@ -50,7 +55,11 @@ router.post("/login", (req, res) => {
     if (!valid) return res.status(401).json({ error: "Invalid password" });
 
     const token = jwt.sign({ id: user.id }, "SECRET123", { expiresIn: "1d" });
-    res.json({ message: "Login successful", token });
+    res.json({ 
+      message: "Login successful", 
+      token, 
+      user: { id: user.id, email: user.email, name: user.name, picture: user.picture } 
+    });
   });
 });
 
@@ -76,7 +85,13 @@ router.post("/signup", async (req, res) => {
         [email, hashedPassword, name],
         (err, userResult) => {
           if (err) return res.status(500).json({ error: "Failed to create user" });
-          return res.json({ message: "Signup successful" });
+          const userId = userResult.insertId;
+          const token = jwt.sign({ id: userId }, "SECRET123", { expiresIn: "1d" });
+          return res.json({ 
+            message: "Signup successful", 
+            token, 
+            user: { id: userId, email, name } 
+          });
         }
       );
     });
@@ -115,7 +130,11 @@ router.post("/google", (req, res) => {
             db.query("UPDATE users SET name = COALESCE(name, ?), picture = ? WHERE id = ?", [name, picture, user.id]);
 
             const jwtToken = jwt.sign({ id: user.id }, "SECRET123", { expiresIn: "1d" });
-            return res.json({ message: "Google login successful", token: jwtToken });
+            return res.json({ 
+              message: "Google login successful", 
+              token: jwtToken, 
+              user: { id: user.id, email: user.email, name: user.name, picture: user.picture } 
+            });
           } else {
             const randomPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
             const hashedPassword = await bcrypt.hash(randomPassword, 10);
@@ -128,7 +147,11 @@ router.post("/google", (req, res) => {
                 const userId = userResult.insertId;
                 
                 const jwtToken = jwt.sign({ id: userId }, "SECRET123", { expiresIn: "1d" });
-                return res.json({ message: "Google signup successful", token: jwtToken });
+                return res.json({ 
+                  message: "Google signup successful", 
+                  token: jwtToken, 
+                  user: { id: userId, email, name: name || "Google User", picture: picture || null } 
+                });
               }
             );
           }

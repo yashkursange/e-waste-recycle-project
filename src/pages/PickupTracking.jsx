@@ -203,10 +203,7 @@ const PickupTracking = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-green-50/20 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300">
       {/* Modern Header with Soft Gradient */}
       <div 
-        className="relative py-16 overflow-hidden"
-        style={{
-          background: 'linear-gradient(135deg, #f8fafc 0%, #e8f5e9 50%, #ffffff 100%)'
-        }}
+        className="relative py-16 overflow-hidden bg-gradient-to-br from-slate-50 via-green-50 to-white dark:from-slate-800 dark:via-emerald-900/20 dark:to-slate-900"
       >
         {/* Subtle Pattern Overlay */}
         <div 
@@ -265,26 +262,18 @@ const PickupTracking = () => {
                       {/* Icon Circle */}
                       <div 
                         className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-all duration-300 ${
-                          isActive ? 'shadow-lg shadow-green-200' : 'shadow-md'
-                        }`}
-                        style={{ 
-                          backgroundColor: isCompleted || isActive ? '#16a34a' : '#e5e7eb',
-                          boxShadow: isActive ? '0 0 0 4px rgba(22, 163, 74, 0.15)' : undefined,
-                          animation: isActive ? 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' : undefined
-                        }}
+                          isActive ? 'shadow-lg shadow-green-200 dark:shadow-green-900/50 ring-4 ring-green-600/20 dark:ring-green-500/20 animate-pulse' : 'shadow-md'
+                        } ${isCompleted || isActive ? 'bg-green-600' : 'bg-gray-200 dark:bg-slate-700'}`}
                       >
                         <Icon 
-                          className="w-7 h-7" 
-                          style={{ 
-                            color: isCompleted || isActive ? '#ffffff' : '#9ca3af'
-                          }} 
+                          className={`w-7 h-7 ${isCompleted || isActive ? 'text-white' : 'text-gray-400 dark:text-slate-400'}`}
                         />
                       </div>
                       
                       {/* Label */}
                       <p 
                         className={`text-center font-medium text-sm ${
-                          isCompleted || isActive ? 'text-gray-800' : 'text-gray-400'
+                          isCompleted || isActive ? 'text-gray-800 dark:text-slate-200' : 'text-gray-400 dark:text-slate-500'
                         }`}
                       >
                         {step.label}
@@ -293,13 +282,13 @@ const PickupTracking = () => {
                       {/* Active Indicator */}
                       {isActive && (
                         <span 
-                          className="mt-2 px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700"
+                          className="mt-2 px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                         >
                           Current
                         </span>
                       )}
                       {isCompleted && (
-                        <CheckCircle className="w-5 h-5 mt-2 text-green-600" />
+                        <CheckCircle className="w-5 h-5 mt-2 text-green-600 dark:text-green-500" />
                       )}
                     </div>
                   );
@@ -319,27 +308,26 @@ const PickupTracking = () => {
                 <div 
                   key={step.id} 
                   className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${
-                    isActive ? 'bg-green-50 border-2 border-green-200' : 'bg-gray-50'
+                    isActive ? 'bg-green-50 border-2 border-green-200 dark:bg-green-900/20 dark:border-green-800' : 'bg-gray-50 dark:bg-slate-700/50 border-2 border-transparent'
                   }`}
                 >
                   <div 
-                    className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ 
-                      backgroundColor: isCompleted || isActive ? '#16a34a' : '#e5e7eb'
-                    }}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      isCompleted || isActive ? 'bg-green-600' : 'bg-gray-200 dark:bg-slate-600'
+                    }`}
                   >
-                    <Icon className="w-6 h-6 text-white" />
+                    <Icon className={`w-6 h-6 ${isCompleted || isActive ? 'text-white' : 'text-gray-400 dark:text-slate-400'}`} />
                   </div>
                   <div className="flex-1">
-                    <p className={`font-medium ${isCompleted || isActive ? 'text-gray-800' : 'text-gray-400'}`}>
+                    <p className={`font-medium ${isCompleted || isActive ? 'text-gray-800 dark:text-slate-200' : 'text-gray-400 dark:text-slate-500'}`}>
                       {step.label}
                     </p>
                     {isActive && (
-                      <p className="text-xs text-green-700 mt-1">In Progress</p>
+                      <p className="text-xs text-green-700 dark:text-green-400 mt-1">In Progress</p>
                     )}
                   </div>
                   {isCompleted && (
-                    <CheckCircle className="w-5 h-5 text-green-600" />
+                    <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-500" />
                   )}
                 </div>
               );

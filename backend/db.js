@@ -3,7 +3,7 @@ const mysql = require("mysql2");
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "password", // ← if you set a password in Workbench, put it here
+  password: "password",  
   database: "e_waste"
 });
 

@@ -58,7 +58,7 @@ const Onboarding = () => {
       setDirection("forward");
       setCurrentStep(currentStep + 1);
     } else {
-      navigate("/");
+      navigate("/dashboard");
     }
   };
 
@@ -68,7 +68,7 @@ const Onboarding = () => {
   };
 
   const handleSkip = () => {
-    navigate("/");
+    navigate("/dashboard");
   };
 
   const handleDotClick = (index) => {

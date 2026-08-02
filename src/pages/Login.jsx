@@ -32,7 +32,11 @@ const Login = () => {
         setLoading(false);
         if (data.token && data.user) {
           login(data.user, data.token);
-          navigate("/dashboard");
+          if (data.message === "Google signup successful") {
+            navigate("/onboarding");
+          } else {
+            navigate("/dashboard");
+          }
         } else {
           alert(data.error || "Google login failed");
         }

@@ -71,7 +71,7 @@ const Signup = () => {
 
       if (res.ok && data.token && data.user) {
         login(data.user, data.token);
-        navigate("/dashboard");
+        navigate("/onboarding");
       } else {
         alert(data.error || "Signup failed");
       }

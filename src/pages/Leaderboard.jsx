@@ -31,25 +31,25 @@ const Leaderboard = () => {
       case 0: return <Trophy className="w-6 h-6 text-yellow-500" />;
       case 1: return <Medal className="w-6 h-6 text-gray-400" />;
       case 2: return <Award className="w-6 h-6 text-amber-600" />;
-      default: return <span className="font-bold text-gray-500 w-6 text-center">{index + 1}</span>;
+      default: return <span className="font-bold text-gray-500 dark:text-slate-400 w-6 text-center">{index + 1}</span>;
     }
   };
 
   const getRowStyle = (index) => {
     switch (index) {
-      case 0: return "bg-yellow-50 border-yellow-200";
-      case 1: return "bg-gray-50 border-gray-200";
-      case 2: return "bg-orange-50 border-orange-200";
-      default: return "bg-white border-gray-100 hover:bg-emerald-50";
+      case 0: return "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800/30";
+      case 1: return "bg-gray-50 dark:bg-slate-800/80 border-gray-200 dark:border-slate-700";
+      case 2: return "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800/30";
+      default: return "bg-white dark:bg-slate-800 border-gray-100 dark:border-slate-700 hover:bg-emerald-50 dark:hover:bg-slate-700/50";
     }
   };
 
   const getRankColor = (index) => {
     switch (index) {
-      case 0: return "text-yellow-600";
-      case 1: return "text-gray-600";
-      case 2: return "text-amber-700";
-      default: return "text-gray-700";
+      case 0: return "text-yellow-600 dark:text-yellow-500";
+      case 1: return "text-gray-600 dark:text-slate-300";
+      case 2: return "text-amber-700 dark:text-orange-400";
+      default: return "text-gray-700 dark:text-slate-200";
     }
   };
 
@@ -124,15 +124,15 @@ const Leaderboard = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className={`font-bold ${getRankColor(index)} text-lg flex items-center gap-3 dark:text-slate-100`}>
-                          <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold border border-emerald-200 shrink-0">
+                        <div className={`font-bold ${getRankColor(index)} text-lg flex items-center gap-3`}>
+                          <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center text-emerald-700 dark:text-emerald-400 font-bold border border-emerald-200 dark:border-emerald-800 shrink-0">
                             {user?.name && typeof user.name === 'string' ? user.name.charAt(0).toUpperCase() : '?'}
                           </div>
                           {user?.name || 'Anonymous User'}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <div className="flex items-center justify-end gap-2 text-emerald-600 font-bold text-lg">
+                        <div className="flex items-center justify-end gap-2 text-emerald-600 dark:text-emerald-400 font-bold text-lg">
                           <Recycle className="w-5 h-5" />
                           {user?.items || 0}
                         </div>

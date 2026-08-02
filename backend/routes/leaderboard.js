@@ -11,7 +11,7 @@ router.get("/", (req, res) => {
     const query = `
         SELECT 
             u.id, 
-            up.name, 
+            COALESCE(u.name, up.name, 'Anonymous') as name, 
             COALESCE(SUM(p.quantity), 0) as items
         FROM 
             users u
@@ -20,9 +20,7 @@ router.get("/", (req, res) => {
         LEFT JOIN 
             pickups p ON u.id = p.user_id AND p.status = 'Completed'
         GROUP BY 
-            u.id, up.name
-        HAVING 
-            items > 0
+            u.id, u.name, up.name
         ORDER BY 
             items DESC
         LIMIT 10
